@@ -10,19 +10,48 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2024_11_16_122156) do
+ActiveRecord::Schema[8.0].define(version: 2024_11_18_141750) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
+  create_table "areas", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "categories", force: :cascade do |t|
+    t.string "name"
+    t.string "image"
+    t.text "description"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "ingredients", force: :cascade do |t|
+    t.string "name"
+    t.text "desc"
+    t.string "img"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "recipes", force: :cascade do |t|
-    t.string "title", null: false
-    t.string "category", null: false
-    t.string "area", null: false
-    t.text "instructions", null: false
-    t.text "description", null: false
-    t.string "thumb", default: "https://raw.githubusercontent.com/do-community/react_rails_recipe/master/app/assets/images/Sammy_Meal.jpg"
-    t.string "time", null: false
-    t.string "ingredients", null: false, array: true
+    t.string "title"
+    t.string "category"
+    t.string "area"
+    t.text "instructions"
+    t.text "description"
+    t.string "thumb"
+    t.string "time"
+    t.text "ingredients", default: [], array: true
+    t.integer "favoriteCount"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "testimonials", force: :cascade do |t|
+    t.text "testimonial"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end

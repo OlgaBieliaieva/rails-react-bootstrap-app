@@ -8,8 +8,8 @@ const NewRecipe = () => {
   const [area, setArea] = useState("");
   const [instructions, setInstructions] = useState("");
   const [description, setDescription] = useState("");
-//   const [thumb, setThumb] = useState("");
-//   const [time, setTime] = useState("");
+    const [thumb, setThumb] = useState("");
+  const [time, setTime] = useState("");
   const [ingredients, setIngredients] = useState([]);
 
   const stripHtmlEntities = (str) => {
@@ -20,8 +20,8 @@ const NewRecipe = () => {
   };
 
   const stringToArray = (str) => {
-    return str.split(",")
-  }
+    return str.split(",");
+  };
 
   const onChange = (event, setFunction) => {
     setFunction(event.target.value);
@@ -36,8 +36,8 @@ const NewRecipe = () => {
       category.length == 0 ||
       area.length == 0 ||
       description.length == 0 ||
-    //   time.length == 0 ||
-    //   thumb.length == 0 ||
+      time.length == 0 ||
+        thumb.length == 0 ||
       ingredients.length == 0 ||
       instructions.length == 0
     )
@@ -53,6 +53,7 @@ const NewRecipe = () => {
       description: stripHtmlEntities(description),
       instructions: stripHtmlEntities(instructions),
     };
+console.log(body);
 
     const token = document.querySelector('meta[name="csrf-token"]').content;
     fetch(url, {
@@ -124,8 +125,7 @@ const NewRecipe = () => {
                 required
                 onChange={(event) => onChange(event, setDescription)}
               />
-            </div>   
-                    
+            </div>
             <div className="form-group">
               <label htmlFor="recipeIngredients">Ingredients</label>
               <input
@@ -140,7 +140,28 @@ const NewRecipe = () => {
                 Separate each ingredient with a comma.
               </small>
             </div>
-            
+            <div className="form-group">
+              <label htmlFor="recipeTime">Time</label>
+              <input
+                type="text"
+                name="time"
+                id="recipeTime"
+                className="form-control"
+                required
+                onChange={(event) => onChange(event, setTime)}
+              />
+            </div>
+            <div className="form-group">
+              <label htmlFor="recipeThumb">Photo</label>
+              <input
+                type="text"
+                name="thumb"
+                id="recipeThumb"
+                className="form-control"
+                required
+                onChange={(event) => onChange(event, setThumb)}
+              />
+            </div>
             <label htmlFor="instructions">Preparation Instructions</label>
             <textarea
               className="form-control"
