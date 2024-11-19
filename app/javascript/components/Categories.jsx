@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { BsArrowDownRightCircle } from "react-icons/bs";
 
 const Categories = () => {
-  const navigate = useNavigate();
   const [categories, setCategories] = useState([]);
 
   useEffect(() => {
@@ -15,62 +15,63 @@ const Categories = () => {
         throw new Error("Network response was not ok.");
       })
       .then((res) => setCategories(res))
-    //   .catch(() => navigate("/"));
+      .catch((err) => console.log(err));
   }, []);
 
   const allCategories = categories.map((category, index) => (
     <div key={index} className="col-md-6 col-lg-4">
-      <div className="card mb-4">
+      <div className="card h-100 mb-4" style={{ maxHeight: 404 }}>
         <img
           src={category.image}
           className="card-img-top"
+          style={{ width: "100%", height: "50%", objectFit: "cover" }}
           alt={`${category.name} image`}
         />
-        <div className="card-body">
-          <h5 className="card-title">{category.name}</h5>
-          {/* <Link to={`/recipe/${ecipe.id}`} className="btn custom-button"> */}
-            {/* View Recipe */}
-          {/* </Link> */}
+
+        <div className="card-body position-relative" style={{ maxHeight: 200 }}>
+          <h3 className="card-title">{category.name}</h3>
+          <p className="text-muted" style={{ textOverflow: "ellipsis" }}>
+            {category.description}
+          </p>
+          <Link
+            to={`/category/${category.id}`}
+            className="btn"
+            style={{ position: "absolute", bottom: 8, right: 8 }}
+          >
+            <BsArrowDownRightCircle style={{ width: 32, height: 32 }} />
+          </Link>
         </div>
       </div>
     </div>
   ));
-//   const noCategories = (
-//     <div className="vw-100 vh-50 d-flex align-items-center justify-content-center">
-//       <h4>
-//         No categories yet. Why not <Link to="/new_recipe">create one</Link>
-//       </h4>
-//     </div>
-//   );
+  //   const noCategories = (
+  //     <div className="vw-100 vh-50 d-flex align-items-center justify-content-center">
+  //       <h4>
+  //         No categories yet. Why not <Link to="/new_recipe">create one</Link>
+  //       </h4>
+  //     </div>
+  //   );
 
   return (
-    <>
-      <section className="jumbotron jumbotron-fluid text-center">
-        <div className="container py-5">
-          <h1 className="display-4">Recipes for every occasion</h1>
+    <main className="w-100">
+      <section className="w-100 container container-fluid text-center">
+        <div className=" w-100 container py-5">
+          <h2 className="display-4">Categories</h2>
           <p className="lead text-muted">
-            We’ve pulled together our most popular recipes, our latest
-            additions, and our editor’s picks, so there’s sure to be something
-            tempting for you to try.
+            Discover a limitless world of culinary possibilities and enjoy
+            exquisite recipes that combine taste, style and the warm atmosphere
+            of the kitchen.
           </p>
         </div>
       </section>
-      <div className="py-5">
-        <main className="container">
-          <div className="text-end mb-3">
-            <Link to="/recipe" className="btn custom-button">
-              Create New Recipe
-            </Link>
-          </div>
-          <div className="row">
+      <section className="w-100 container container-fluid">
+        <div className="container">
+          <div className="w-100 row" style={{ rowGap: 16 }}>
             {categories.length > 0 && allCategories}
           </div>
-          <Link to="/" className="btn btn-link">
-            Home
-          </Link>
-        </main>
-      </div>
-    </>
+        </div>
+      </section>
+    </main>
   );
 };
 

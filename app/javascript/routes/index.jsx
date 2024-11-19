@@ -1,9 +1,10 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Home from "../components/Home";
-import Recipes from "../components/Recipes";
-import Recipe from "../components/Recipe";
-import NewRecipe from "../components/NewRecipe";
+import Home from "../pages/Home";
+import Recipes from "../pages/Recipes";
+import Recipe from "../pages/Recipe";
+import NewRecipe from "../pages/NewRecipe";
+import Category from "../pages/Category";
 
 export default (
   <Router>
@@ -12,6 +13,7 @@ export default (
       <Route path="/recipes" element={<Recipes />} />
       <Route path="/recipe/:id" element={<Recipe />} />
       <Route path="/recipe" element={<NewRecipe />} />
+      <Route path="/category/:id" element={<Category />} />
     </Routes>
   </Router>
 );
