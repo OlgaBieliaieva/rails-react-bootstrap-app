@@ -20,14 +20,15 @@ categories_data.each do |category|
   )
 end
 
-ingredients_file = File.read(Rails.root.join('db', 'seeds', 'db-foodies.ingredients.json'))
+ingredients_file = File.read(Rails.root.join('db', 'seeds', 'db-foodies.ingredients-with-id.json'))
 ingredients_data = JSON.parse(ingredients_file)
 
 ingredients_data.each do |ingredient|
   Ingredient.create!(
+    db_id: ingredient["_id"],
     name: ingredient["name"],
-    desc: ingredient["desc"],
-    img: ingredient["img"]
+    description: ingredient["desc"],
+    image: ingredient["img"]
   )
 end
 
@@ -56,6 +57,13 @@ testimonials_data.each do |testimonial|
     testimonial: testimonial["testimonial"]
   )
 end
+
+puts "Running default seeds..."
+
+# Імпорт даних до таблиці Item
+load Rails.root.join('db', 'seeds', 'update_ingredients.rb')
+
+puts "Seeds completed successfully."
 
 
 # This file should ensure the existence of records required to run the application in every environment (production,
