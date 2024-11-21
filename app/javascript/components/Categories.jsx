@@ -1,23 +1,8 @@
-import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React from "react";
+import { Link } from "react-router-dom";
 import { BsArrowDownRightCircle } from "react-icons/bs";
 
-const Categories = () => {
-  const [categories, setCategories] = useState([]);
-
-  useEffect(() => {
-    const url = "/api/v1/categories/index";
-    fetch(url)
-      .then((res) => {
-        if (res.ok) {
-          return res.json();
-        }
-        throw new Error("Network response was not ok.");
-      })
-      .then((res) => setCategories(res))
-      .catch((err) => console.log(err));
-  }, []);
-
+const Categories = ({ categories }) => {
   const allCategories = categories.map((category, index) => (
     <div key={index} className="col-md-6 col-lg-4">
       <div className="card h-100 mb-4" style={{ maxHeight: 404 }}>

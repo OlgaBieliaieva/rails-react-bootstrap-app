@@ -1,38 +1,36 @@
-import React, { useState, useEffect, useRef } from "react";
+import React from "react";
+import { Link } from "react-router-dom";
+import { BsArrowDownRightCircle } from "react-icons/bs";
 
-const RecipesList = ()=> {
-    const [categories, setCategories] = useState([]);
-
-  useEffect(() => {
-    const url = "/api/v1/recipes/index";
-    fetch(url)
-      .then((res) => {
-        if (res.ok) {
-          return res.json();
-        }
-        throw new Error("Network response was not ok.");
-      })
-      .then((res) => setCategories(res))
-      .catch((err) => console.log(err));
-  }, []);
-
-  const allCategories = categories.map((category, index) => (
+const RecipesList = ({ recipes }) => {
+  const allRecipes = recipes?.map((recipe, index) => (
     <div key={index} className="col-md-6 col-lg-4">
-      <div className="card h-100 mb-4" style={{ maxHeight: 404 }}>
+      <div className="card h-100 mb-4" >
         <img
-          src={category.image}
+          src={recipe.thumb}
           className="card-img-top"
-          style={{ width: "100%", height: "50%", objectFit: "cover" }}
-          alt={`${category.name} image`}
+          style={{ width: "100%", height: "60%", objectFit: "cover" }}
+          alt={`${recipe.title} image`}
         />
 
-        <div className="card-body position-relative" style={{ maxHeight: 200 }}>
-          <h3 className="card-title">{category.name}</h3>
-          <p className="text-muted" style={{ textOverflow: "ellipsis" }}>
-            {category.description}
+        <div
+          className="card-body"
+          style={{
+            position: "relative",
+            height: 150,
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+          }}
+        >
+          <h3 className="card-title" style={{ maxHeight: 70, overflow: "hidden", textOverflow: "ellipsis" }}>{recipe.title}</h3>
+          <p
+            className="text-muted"
+            style={{ height: 50, overflow: "hidden", textOverflow: "ellipsis" }}
+          >
+            {recipe.description}
           </p>
           <Link
-            to={`/category/${category.id}`}
+            to={`/recipe/${recipe.id}`}
             className="btn"
             style={{ position: "absolute", bottom: 8, right: 8 }}
           >
@@ -42,21 +40,23 @@ const RecipesList = ()=> {
       </div>
     </div>
   ));
-  //   const noCategories = (
-  //     <div className="vw-100 vh-50 d-flex align-items-center justify-content-center">
-  //       <h4>
-  //         No categories yet. Why not <Link to="/new_recipe">create one</Link>
-  //       </h4>
-  //     </div>
-  //   );
-    return (
-<section className="w-100 container container-fluid">
-        <div className="container">
-          <div className="w-100 row" style={{ rowGap: 16 }}>
-            {categories.length > 0 && allCategories}
-          </div>
+
+  const noRecipes = (
+    <div className="w-100 vh-50 d-flex align-items-center justify-content-center">
+      <h4>
+        No recipes yet. Why not <Link to="/new_recipe">create one</Link>
+      </h4>
+    </div>
+  );
+
+  return (
+    <section className="w-100 container container-fluid">
+      <div className="container d-flex align-items-center">
+        <div className="w-100 row" style={{ rowGap: 16 }}>
+          {recipes?.length > 0 ? allRecipes : noRecipes}
         </div>
-      </section>
-    )
-}
-export default RecipesList
+      </div>
+    </section>
+  );
+};
+export default RecipesList;

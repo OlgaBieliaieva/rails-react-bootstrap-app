@@ -10,7 +10,37 @@ class Api::V1::CategoriesController < ApplicationController
   end
 
   def show
-    render json: @category
+    # Отримуємо всі рецепти, що належать до категорії
+    recipes = Recipe.where(category: @category.name)
+
+    # Фільтрація за областю (area)
+    if params[:area].present? && params[:area] != "All"
+       recipes = recipes.where(area: params[:area])
+    end
+
+    # Фільтрація за інгредієнтами
+    # if params[:ingredient].present? && params[:ingredient] != "All"
+    #   ingredient = Ingredient.find_by(name: params[:ingredient])
+    #   if ingredient
+    #     recipes = recipes.where("ingredients @> ?", [ { db_id: ingredient.id } ].to_json)
+    #   else
+    #     recipes = Recipe.none # Якщо інгредієнт не знайдено, повертаємо пустий результат
+    #   end
+    # end
+
+
+    # render json: @category
+    render json: {
+          category: {
+            id: @category.id,
+            name: @category.name,
+            description: @category.description # Додайте інші необхідні поля
+          },
+          recipes: recipes
+        }, status: :ok
+    # rescue StandardError => e
+    #   render json: { error: "Something went wrong: #{e.message}" }, status: :internal_server_error
+    # end
   end
 
   private

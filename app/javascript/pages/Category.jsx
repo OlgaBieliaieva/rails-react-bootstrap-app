@@ -9,6 +9,7 @@ import {
 import Header from "../components/Header";
 import { AddButton } from "../components/Buttons";
 import Select from "../components/Select";
+import RecipesList from "../components/RecipesList";
 import { BsArrowLeftShort } from "react-icons/bs";
 
 const Category = () => {
@@ -21,12 +22,14 @@ const Category = () => {
   const [areas, setAreas] = useState("");
   const [ingredients, setIngredients] = useState("");
   const [recipes, setRecipes] = useState("");
-  const [targetArea, setTargetArea] = useState(null);
-  const [targetIngredient, setTargetIngredient] = useState(null);
-  const defaultItem = { name: "All" };
+  // const [targetArea, setTargetArea] = useState(null);
+  // const [targetIngredient, setTargetIngredient] = useState(null);
+  // const defaultItem = { name: "All" };
 
   useEffect(() => {
-    const url = `/api/v1/categories/show/${params.id}`;
+    const url = `/api/v1/categories/show/${params.id}${
+      location.search ?? location.search
+    }`;
     fetch(url)
       .then((res) => {
         if (res.ok) {
@@ -34,9 +37,12 @@ const Category = () => {
         }
         throw new Error("Network response was not ok.");
       })
-      .then((res) => setCategory(res))
+      .then((res) => {
+        setCategory(res.category);
+        setRecipes(res.recipes);
+      })
       .catch(() => navigate("/"));
-  }, []);
+  }, [params.id, location.search]);
 
   useEffect(() => {
     const url = `/api/v1/areas/index`;
@@ -64,37 +70,17 @@ const Category = () => {
       .catch(() => navigate("/"));
   }, []);
 
-  useEffect(() => {
-    const url = `/api/v1/recipes/index${location.search ?? location.search}`;
-    console.log(url);
-    
-    fetch(url)
-      .then((res) => {
-        if (res.ok) {
-          return res.json();
-        }
-        throw new Error("Network response was not ok.");
-      })
-      .then((res) => setRecipes(res))
-      .catch(() => navigate("/"));
-  }, [searchParams]);
-
-  const handleSelect = (name = null, id = null, value = "All") => {
-    console.log(name);
-    console.log(id);
-    console.log(value);
-
+  const handleSelect = (name = null, value = "All") => {
     if (name === "area") {
-      setTargetArea(value);
+      // setTargetArea(value);
       const ingredient = searchParams.get("ingredient");
-      console.log(ingredient);
 
       const newParams = ingredient
         ? { area: value, ingredient }
         : { area: value };
       setSearchParams(newParams);
     } else {
-      setTargetIngredient(value);
+      // setTargetIngredient(value);
       const area = searchParams.get("area");
       const newParams = area
         ? { area, ingredient: value ?? "" }
@@ -102,11 +88,8 @@ const Category = () => {
       setSearchParams(newParams);
     }
   };
-  console.log(location);
   console.log(recipes);
   
-  
-
   return (
     <div className="w-100 p-4 primary-color d-flex flex-column align-items-center justify-content-center">
       <div className="w-100 container container-fluid d-flex flex-column align-items-center justify-content-center gap-2 bg-dark rounded-5">
@@ -148,6 +131,7 @@ const Category = () => {
           </form>
         ) : null}
       </div>
+      {recipes?.length > 0 ? <RecipesList recipes={recipes}/> : null}
     </div>
   );
 };

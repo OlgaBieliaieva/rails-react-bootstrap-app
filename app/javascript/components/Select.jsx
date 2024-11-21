@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 
 const Select = ({ data, label, name, onSelect }) => {
@@ -22,7 +22,7 @@ const Select = ({ data, label, name, onSelect }) => {
 
     onSelect(
       e.target.name,
-      e.target.options[e.target.selectedIndex].id,
+      // e.target.options[e.target.selectedIndex].id,
       e.target.value
     );
   };
