@@ -7,7 +7,7 @@ const Recipe = () => {
   const [recipe, setRecipe] = useState({ ingredients: "" });
 
   useEffect(() => {
-    const url = `/api/v1/show/${params.id}`;
+    const url = `/api/v1/recipes/show/${params.id}`;
     fetch(url)
       .then((response) => {
         if (response.ok) {

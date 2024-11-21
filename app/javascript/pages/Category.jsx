@@ -131,7 +131,7 @@ const Category = () => {
           </form>
         ) : null}
       </div>
-      {recipes?.length > 0 ? <RecipesList recipes={recipes}/> : null}
+      {recipes ? <RecipesList recipes={recipes}/> : null}
     </div>
   );
 };

@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { BsArrowDownRightCircle } from "react-icons/bs";
 
 const Categories = ({ categories }) => {
-  const allCategories = categories.map((category, index) => (
+  const allCategories = categories.map((category, index) => index%2 ? (
     <div key={index} className="col-md-6 col-lg-4">
       <div className="card h-100 mb-4" style={{ maxHeight: 404 }}>
         <img
@@ -28,14 +28,14 @@ const Categories = ({ categories }) => {
         </div>
       </div>
     </div>
-  ));
-  //   const noCategories = (
-  //     <div className="vw-100 vh-50 d-flex align-items-center justify-content-center">
-  //       <h4>
-  //         No categories yet. Why not <Link to="/new_recipe">create one</Link>
-  //       </h4>
-  //     </div>
-  //   );
+  ) : null);
+  const noCategories = (
+    <div className="vw-100 vh-50 d-flex align-items-center justify-content-center">
+      <h4>
+        No categories yet. Why not <Link to="/new_recipe">create one</Link>
+      </h4>
+    </div>
+  );
 
   return (
     <main className="w-100">
@@ -52,7 +52,26 @@ const Categories = ({ categories }) => {
       <section className="w-100 container container-fluid">
         <div className="container">
           <div className="w-100 row" style={{ rowGap: 16 }}>
-            {categories.length > 0 && allCategories}
+            {categories.length > 0 ? (
+              <>
+                {allCategories}
+                <div className="col-md-6 col-lg-4">
+                  <div
+                    className="card h-100 mb-4 d-flex align-items-center justify-content-center bg-dark fw-bold fs-1"
+                    style={{ maxHeight: 404 }}
+                  >
+                    <Link
+                      to="/recipes"
+                      className="link-underline link-underline-opacity-0 text-light"
+                    >
+                      All recipes
+                    </Link>
+                  </div>
+                </div>
+              </>
+            ) : (
+              noCategories
+            )}
           </div>
         </div>
       </section>

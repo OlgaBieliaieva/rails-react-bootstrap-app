@@ -48,10 +48,11 @@ const RecipesList = ({ recipes }) => {
       </h4>
     </div>
   );
+console.log(recipes);
 
   return (
     <section className="w-100 container container-fluid">
-      <div className="container d-flex align-items-center">
+      <div className="container py-4 d-flex align-items-center justify-content-center">
         <div className="w-100 row" style={{ rowGap: 16 }}>
           {recipes?.length > 0 ? allRecipes : noRecipes}
         </div>
