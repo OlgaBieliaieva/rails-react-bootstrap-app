@@ -1,10 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
+import Header from "../components/Header";
 
 const Recipe = () => {
   const params = useParams();
   const navigate = useNavigate();
-  const [recipe, setRecipe] = useState({ ingredients: "" });
+  const [recipe, setRecipe] = useState("");
+  const [ingredients, setIngredients] = useState("");
+  const [isValidImg, setIsValidImg] = useState(true);
+  let ingredientImg =
+    "https://res.cloudinary.com/de3wlojzp/image/upload/v1732287644/no-ingr_xcxuye.png";
 
   useEffect(() => {
     const url = `/api/v1/recipes/show/${params.id}`;
@@ -15,18 +20,23 @@ const Recipe = () => {
         }
         throw new Error("Network response was not ok.");
       })
-      .then((response) => setRecipe(response))
+      .then((response) => {
+        setRecipe(response.recipe);
+        setIngredients(response.expanded_ingredients);
+      })
       .catch(() => navigate("/recipes"));
   }, [params.id]);
+
+  const handleError = () => setIsValidImg(false);
 
   const addHtmlEntities = (str) => {
     return String(str).replace(/&lt;/g, "<").replace(/&gt;/g, ">");
   };
 
-  const deleteRecipe = () => {       
-    const url = `/api/v1/destroy/${params.id}`;
+  const deleteRecipe = () => {
+    const url = `/api/v1/recipes/destroy/${params.id}`;
     const token = document.querySelector('meta[name="csrf-token"]').content;
-    
+
     fetch(url, {
       method: "DELETE",
       headers: {
@@ -47,14 +57,45 @@ const Recipe = () => {
   const ingredientList = () => {
     let ingredientList = "No ingredients available";
 
-    if (recipe.ingredients.length > 0) {
-      ingredientList = recipe.ingredients
-        
-        .map((ingredient, index) => (
-          <li key={index} className="list-group-item">
-            {ingredient}
-          </li>
-        ));
+    if (ingredients.length > 0) {
+      ingredientList = ingredients.map((ingredient, index) => (
+        <div key={index} className="card p-1" style={{ maxWidth: 240 }}>
+          <div className="row g-0">
+            <div className="col-md-3 d-flex align-items-center justify-content-center">
+              {isValidImg ? (
+                <img
+                  src={ingredient.image}
+                  className="img-fluid rounded-start"
+                  alt={ingredient.name}
+                  onError={handleError}
+                />
+              ) : (
+                <img
+                  src="https://res.cloudinary.com/de3wlojzp/image/upload/v1732287644/no-ingr_xcxuye.png"
+                  className="img-fluid rounded-start"
+                  alt={ingredient.name}
+                  // onError={setIsValidImg(false)}
+                />
+              )}
+            </div>
+            <div className="col-md-9">
+              <div className="card-body p-2">
+                <h4 className="card-title" style={{ fontSize: 14 }}>
+                  {ingredient.name}
+                </h4>
+                <p className="card-text">
+                  <small
+                    className="text-body-secondary"
+                    style={{ fontSize: 12 }}
+                  >
+                    {ingredient.measure}
+                  </small>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      ));
     }
 
     return ingredientList;
@@ -63,27 +104,49 @@ const Recipe = () => {
   const recipeInstruction = addHtmlEntities(recipe.instructions);
 
   return (
-    <div className="">
-      <div className="hero position-relative d-flex align-items-center justify-content-center">
+    <div className="w-100 p-4 primary-color d-flex flex-column align-items-center justify-content-center gap-4">
+      <div className="w-100 container container-fluid d-flex flex-column align-items-center justify-content-center gap-2 bg-dark rounded-5">
+        <Header />
+      </div>
+      <div className="w-100 container container-fluid">
+        <nav aria-label="breadcrumb">
+          <ol className="breadcrumb">
+            <li className="breadcrumb-item">
+              <Link to="/">Home</Link>
+            </li>
+            <li className="breadcrumb-item">
+              <Link to="/recipes">Recipes</Link>
+            </li>
+            <li className="breadcrumb-item active" aria-current="page">
+              {recipe.title}
+            </li>
+          </ol>
+        </nav>
+      </div>
+      <div
+        className="w-100 container container-fluid d-flex flex-column align-items-center justify-content-center overflow-hidden p-0 m-0"
+        style={{ borderRadius: 30 }}
+      >
         <img
           src={recipe.thumb}
           alt={`${recipe.title} image`}
-          className="img-fluid position-absolute"
+          style={{ width: "100%", maxHeight: 400, objectFit: "cover" }}
         />
-        <div className="overlay bg-dark position-absolute" />
-        <h1 className="display-4 position-relative text-white">
-          {recipe.title}
-        </h1>
       </div>
-      <div className="container py-5">
-        <div className="row">
-          <div className="col-sm-12 col-lg-3">
-            <ul className="list-group">
-              <h5 className="mb-2">Ingredients</h5>
+      <div className="w-100 container container-fluid">
+        <h1 className="display-4">{recipe.title}</h1>
+        <p className="lead text-muted">{recipe.description}</p>
+      </div>
+
+      <div className="container container-fluid w-100">
+        <div className="row container container-fluid w-100">
+          <div className="col-sm-12 col-lg-3 container container-fluid mb-5">
+            <h5 className="mb-2">Ingredients</h5>
+            <div className="row gap-2 justify-content-center">
               {ingredientList()}
-            </ul>
+            </div>
           </div>
-          <div className="col-sm-12 col-lg-7">
+          <div className="col-sm-12 col-lg-7 mb-5">
             <h5 className="mb-2">Preparation Instructions</h5>
             <div
               dangerouslySetInnerHTML={{
@@ -92,14 +155,15 @@ const Recipe = () => {
             />
           </div>
           <div className="col-sm-12 col-lg-2">
-            <button type="button" className="btn btn-danger" onClick={deleteRecipe}>
+            <button
+              type="button"
+              className="btn btn-danger"
+              onClick={deleteRecipe}
+            >
               Delete Recipe
             </button>
           </div>
         </div>
-        <Link to="/recipes" className="btn btn-link">
-          Back to recipes
-        </Link>
       </div>
     </div>
   );

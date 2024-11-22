@@ -8,27 +8,26 @@ class Api::V1::RecipesController < ApplicationController
     #   end
     recipes = Recipe.all.order(created_at: :desc)
 
-    if params[:ingredient].present? && params[:ingredient] != "All"
+     if params[:category].present? && params[:category] != "All"
+      recipes = recipes.where(category: params[:category])
+     end
+
+     if params[:area].present? && params[:area] != "All"
+      recipes = recipes.where(area: params[:area])
+     end
+
+     if params[:ingredient].present? && params[:ingredient] != "All"
       ingredient = Ingredient.find_by(name: params[:ingredient])
       if ingredient
-        recipes = recipes.where("ingredients @> ?", [ { db_id: ingredient.id } ].to_json)
+        recipes = recipes.where(
+           "EXISTS (SELECT 1 FROM jsonb_array_elements(ingredients) AS ingredient_item WHERE ingredient_item->>'id' = ?)",
+           ingredient.db_id
+          )
       else
         recipes = Recipe.none # Якщо інгредієнт не знайдено, повертаємо пустий результат
       end
-    end
+     end
 
-    # Фільтрація за областю (area)
-    if params[:area].present? && params[:area] != "All"
-      recipes = recipes.where(area: params[:area])
-    end
-
-    # recipes = recipes.where(area: params[:area]) if params[:area].present?
-    # if params[:ingredient].present?
-    #   recipes = recipes.where(
-    #     "ingredients @> ?::jsonb",
-    #     [ { id: params[:ingredient].to_i } ].to_json
-    #   )
-    # end
     render json: recipes
   end
 
@@ -42,7 +41,22 @@ class Api::V1::RecipesController < ApplicationController
   end
 
   def show
-    render json: @recipe
+    expanded_ingredients = @recipe.ingredients.map do |ingredient|
+      ingredient_data = Ingredient.find_by(db_id: ingredient["id"])
+      if ingredient_data
+        ingredient.merge(
+          "name" => ingredient_data.name,
+          "description" => ingredient_data.description,
+          "image" => ingredient_data.image
+        )
+      else
+        ingredient # Якщо інгредієнт не знайдено, повертаємо без змін
+      end
+    end
+     render json: {
+      recipe: @recipe,
+      expanded_ingredients: expanded_ingredients
+     }
   end
 
   def destroy

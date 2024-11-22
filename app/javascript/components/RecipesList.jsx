@@ -5,14 +5,13 @@ import { BsArrowDownRightCircle } from "react-icons/bs";
 const RecipesList = ({ recipes }) => {
   const allRecipes = recipes?.map((recipe, index) => (
     <div key={index} className="col-md-6 col-lg-4">
-      <div className="card h-100 mb-4" >
+      <div className="card h-100 mb-4">
         <img
           src={recipe.thumb}
           className="card-img-top"
           style={{ width: "100%", height: "60%", objectFit: "cover" }}
           alt={`${recipe.title} image`}
         />
-
         <div
           className="card-body"
           style={{
@@ -22,7 +21,16 @@ const RecipesList = ({ recipes }) => {
             textOverflow: "ellipsis",
           }}
         >
-          <h3 className="card-title" style={{ maxHeight: 70, overflow: "hidden", textOverflow: "ellipsis" }}>{recipe.title}</h3>
+          <h3
+            className="card-title"
+            style={{
+              maxHeight: 70,
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+            }}
+          >
+            {recipe.title}
+          </h3>
           <p
             className="text-muted"
             style={{ height: 50, overflow: "hidden", textOverflow: "ellipsis" }}
@@ -48,7 +56,6 @@ const RecipesList = ({ recipes }) => {
       </h4>
     </div>
   );
-console.log(recipes);
 
   return (
     <section className="w-100 container container-fluid">

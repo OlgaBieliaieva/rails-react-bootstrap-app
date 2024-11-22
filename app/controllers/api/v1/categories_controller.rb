@@ -5,7 +5,7 @@ class Api::V1::CategoriesController < ApplicationController
     #   duplicates = Category.where(name: category.name).order(:created_at)
     #   duplicates.offset(1).destroy_all # Залишає перший запис, видаляє інші
     # end
-    category = Category.all
+    category = Category.all.order(name: :asc)
     render json: category
   end
 

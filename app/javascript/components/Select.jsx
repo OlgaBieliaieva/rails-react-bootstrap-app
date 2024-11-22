@@ -6,25 +6,24 @@ const Select = ({ data, label, name, onSelect }) => {
   const [targetValue, setTargetValue] = useState("All");
 
   useEffect(() => {
-    if (name === "area") {
+    if (name === "category") {
+      const category = searchParams.get("category");
+      setTargetValue(category ?? "All");
+    } else if (name === "area") {
       const area = searchParams.get("area");
-      setTargetValue(area ?? "All")
+      setTargetValue(area ?? "All");
     } else {
       const ingredient = searchParams.get("ingredient");
-      setTargetValue(ingredient ?? "All")
+      setTargetValue(ingredient ?? "All");
     }
-  },[])
+  }, []);
 
   const handleChange = (e) => {
     e.preventDefault();
 
     setTargetValue(e.target.value);
 
-    onSelect(
-      e.target.name,
-      // e.target.options[e.target.selectedIndex].id,
-      e.target.value
-    );
+    onSelect(e.target.name, e.target.value);
   };
 
   const allData = data?.map((item, index) => (

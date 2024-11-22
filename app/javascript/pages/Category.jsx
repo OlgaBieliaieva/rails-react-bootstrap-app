@@ -68,13 +68,13 @@ const Category = () => {
   }, []);
 
   const handleSelect = (name = null, value = "All") => {
-    if (name === "area") {      
+    if (name === "area") {
       const ingredient = searchParams.get("ingredient");
       const newParams = ingredient
         ? { area: value, ingredient }
         : { area: value };
       setSearchParams(newParams);
-    } else {      
+    } else {
       const area = searchParams.get("area");
       const newParams = area
         ? { area, ingredient: value ?? "" }
@@ -82,11 +82,7 @@ const Category = () => {
       setSearchParams(newParams);
     }
   };
-  console.log(recipes);
-  console.log(ingredients);
-  console.log(location);
-  
-  
+
   return (
     <div className="w-100 p-4 primary-color d-flex flex-column align-items-center justify-content-center">
       <div className="w-100 container container-fluid d-flex flex-column align-items-center justify-content-center gap-2 bg-dark rounded-5">
@@ -103,10 +99,12 @@ const Category = () => {
         </div>
       </div>
       <div className="w-100 d-flex flex-column gap-3 pt-3 px-5">
-        <Link to={backLinkRef.current} className="w-100 text-dark">
-          <BsArrowLeftShort style={{ width: 32, height: 32 }} />
-          <span className="fs-5">Back</span>
-        </Link>
+        <div>
+          <Link to={backLinkRef.current} className="w-100 text-dark">
+            <BsArrowLeftShort style={{ width: 32, height: 32 }} />
+            <span className="fs-5">Back</span>
+          </Link>
+        </div>
         {areas.length > 0 && ingredients.length > 0 ? (
           <form className="row g-3" id="filter-form">
             <div className="col">
@@ -128,7 +126,7 @@ const Category = () => {
           </form>
         ) : null}
       </div>
-      {recipes ? <RecipesList recipes={recipes}/> : null}
+      {recipes ? <RecipesList recipes={recipes} /> : null}
     </div>
   );
 };
