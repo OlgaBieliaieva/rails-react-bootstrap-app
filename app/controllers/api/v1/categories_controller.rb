@@ -19,17 +19,19 @@ class Api::V1::CategoriesController < ApplicationController
     end
 
     # Фільтрація за інгредієнтами
-    # if params[:ingredient].present? && params[:ingredient] != "All"
-    #   ingredient = Ingredient.find_by(name: params[:ingredient])
-    #   if ingredient
-    #     recipes = recipes.where("ingredients @> ?", [ { db_id: ingredient.id } ].to_json)
-    #   else
-    #     recipes = Recipe.none # Якщо інгредієнт не знайдено, повертаємо пустий результат
-    #   end
-    # end
+    if params[:ingredient].present? && params[:ingredient] != "All"
+      ingredient = Ingredient.find_by(name: params[:ingredient])
+      if ingredient
+        recipes = recipes.where(
+           "EXISTS (SELECT 1 FROM jsonb_array_elements(ingredients) AS ingredient_item WHERE ingredient_item->>'id' = ?)",
+           ingredient.db_id
+          )
 
+      else
+        recipes = Recipe.none # Якщо інгредієнт не знайдено, повертаємо пустий результат
+      end
+    end
 
-    # render json: @category
     render json: {
           category: {
             id: @category.id,

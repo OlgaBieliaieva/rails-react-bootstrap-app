@@ -8,8 +8,9 @@ class CreateRecipes < ActiveRecord::Migration[8.0]
       t.text :description
       t.string :thumb
       t.string :time
-      t.text :ingredients, array: true, default: []
-      t.integer :favoriteCount, default: 0
+      t.jsonb :ingredients
+      t.integer :favorite_count
+      t.string :owner
 
       t.timestamps
     end

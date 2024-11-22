@@ -8,7 +8,6 @@ export default () => {
 
   useEffect(() => {
     const url = "/api/v1/categories/index";
-
     fetch(url)
       .then((res) => {
         if (res.ok) {

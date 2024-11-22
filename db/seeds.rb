@@ -37,33 +37,33 @@ recipes_data = JSON.parse(recipes_file)
 
 recipes_data.each do |recipe|
   Recipe.create!(
-    title: recipe["title"],
-    category: recipe["category"],
-    area: recipe["area"],
-    instructions: recipe["instructions"],
-    description: recipe["description"],
-    thumb: recipe["thumb"],
-    time: recipe["time"],
-    ingredients: recipe["ingredients"],
-    favoriteCount: recipe["favoriteCount"]
+    title: recipe['title'],
+    category: recipe['category'],
+    area: recipe['area'],
+    instructions: recipe['instructions'],
+    description: recipe['description'],
+    thumb: recipe['thumb'],
+    time: recipe['time'],
+    ingredients: recipe['ingredients'],
+    favorite_count: recipe['favoriteCount']
   )
-end
+  end
 
-testimonials_file = File.read(Rails.root.join('db', 'seeds', 'db-foodies.testimonials.json'))
-testimonials_data = JSON.parse(testimonials_file)
+# testimonials_file = File.read(Rails.root.join('db', 'seeds', 'db-foodies.testimonials.json'))
+# testimonials_data = JSON.parse(testimonials_file)
 
-testimonials_data.each do |testimonial|
-  Testimonial.create!(
-    testimonial: testimonial["testimonial"]
-  )
-end
+# testimonials_data.each do |testimonial|
+#   Testimonial.create!(
+#     testimonial: testimonial["testimonial"]
+#   )
+# end
 
-puts "Running default seeds..."
+# puts "Running default seeds..."
 
-# Імпорт даних до таблиці Item
-load Rails.root.join('db', 'seeds', 'update_ingredients.rb')
+# # Імпорт даних до таблиці Item
+# load Rails.root.join('db', 'seeds', 'update_ingredients.rb')
 
-puts "Seeds completed successfully."
+# puts "Seeds completed successfully."
 
 
 # This file should ensure the existence of records required to run the application in every environment (production,

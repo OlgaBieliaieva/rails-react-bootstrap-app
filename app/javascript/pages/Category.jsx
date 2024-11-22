@@ -22,9 +22,6 @@ const Category = () => {
   const [areas, setAreas] = useState("");
   const [ingredients, setIngredients] = useState("");
   const [recipes, setRecipes] = useState("");
-  // const [targetArea, setTargetArea] = useState(null);
-  // const [targetIngredient, setTargetIngredient] = useState(null);
-  // const defaultItem = { name: "All" };
 
   useEffect(() => {
     const url = `/api/v1/categories/show/${params.id}${
@@ -71,16 +68,13 @@ const Category = () => {
   }, []);
 
   const handleSelect = (name = null, value = "All") => {
-    if (name === "area") {
-      // setTargetArea(value);
+    if (name === "area") {      
       const ingredient = searchParams.get("ingredient");
-
       const newParams = ingredient
         ? { area: value, ingredient }
         : { area: value };
       setSearchParams(newParams);
-    } else {
-      // setTargetIngredient(value);
+    } else {      
       const area = searchParams.get("area");
       const newParams = area
         ? { area, ingredient: value ?? "" }
@@ -89,6 +83,9 @@ const Category = () => {
     }
   };
   console.log(recipes);
+  console.log(ingredients);
+  console.log(location);
+  
   
   return (
     <div className="w-100 p-4 primary-color d-flex flex-column align-items-center justify-content-center">
