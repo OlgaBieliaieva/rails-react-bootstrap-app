@@ -26,8 +26,7 @@ const Recipe = () => {
       })
       .catch(() => navigate("/recipes"));
   }, [params.id]);
-
-  const handleError = () => setIsValidImg(false);
+  
 
   const addHtmlEntities = (str) => {
     return String(str).replace(/&lt;/g, "<").replace(/&gt;/g, ">");
@@ -62,21 +61,16 @@ const Recipe = () => {
         <div key={index} className="card p-1" style={{ maxWidth: 240 }}>
           <div className="row g-0">
             <div className="col-md-3 d-flex align-items-center justify-content-center">
-              {isValidImg ? (
-                <img
-                  src={ingredient.image}
-                  className="img-fluid rounded-start"
-                  alt={ingredient.name}
-                  onError={handleError}
-                />
-              ) : (
-                <img
-                  src="https://res.cloudinary.com/de3wlojzp/image/upload/v1732287644/no-ingr_xcxuye.png"
-                  className="img-fluid rounded-start"
-                  alt={ingredient.name}
-                  // onError={setIsValidImg(false)}
-                />
-              )}
+              <img
+                src={ingredient.image}
+                className="img-fluid rounded-start"
+                alt={ingredient.name}
+                onError={(e) => {
+                  e.target.onError = null;
+                  e.target.src =
+                    "https://res.cloudinary.com/de3wlojzp/image/upload/v1732287644/no-ingr_xcxuye.png";
+                }}
+              />
             </div>
             <div className="col-md-9">
               <div className="card-body p-2">

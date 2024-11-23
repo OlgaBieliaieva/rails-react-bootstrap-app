@@ -1,13 +1,14 @@
-@import 'bootstrap/scss/bootstrap';
-@import 'bootstrap-icons/font/bootstrap-icons';
+@import "bootstrap/scss/bootstrap";
+@import "bootstrap-icons/font/bootstrap-icons";
 
 ul {
   list-style-type: none;
 }
 
-#filter-form .form-floating .form-select:focus {
-  box-shadow: none;
-  outline: none;
-  border: 1px solid (var(--bs-gray-dark))
-
+#filter-form {
+  .form-select:focus {
+    box-shadow: none;
+    outline: none;
+    border: 1px solid (var(--bs-gray-dark));
+  }
 }

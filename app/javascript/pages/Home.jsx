@@ -5,6 +5,7 @@ import Categories from "../components/Categories";
 
 export default () => {
   const [categories, setCategories] = useState([]);
+  
 
   useEffect(() => {
     const url = "/api/v1/categories/index";
@@ -26,6 +27,7 @@ export default () => {
         <Hero />
       </div>
       <Categories categories={categories} />
+      
     </div>
   );
 };
