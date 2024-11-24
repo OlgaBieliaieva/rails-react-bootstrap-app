@@ -1,27 +1,35 @@
 import React, { useState } from "react";
-import { Modal } from "bootstrap";
+import {
+  Modal,
+  ModalBody,
+  ModalHeader,
+  ModalFooter,
+  ModalTitle,
+} from "react-bootstrap";
 import { SignUpButton } from "./Buttons";
 import { SignInButton } from "./Buttons";
-// import Popup from "./Modal";
+import MainModal from "./MainModal";
+import SignUpModal from "./SignUpModal";
 
 const Authbar = () => {
-  const [signUp, setSignUp] = useState(false);
-  // const popup = new Modal(document.getElementById('popup'));
+    const [isSignIn, setIsSignIn] = useState(false);
+  const [isSignUp, setIsSignUp] = useState(false);
 
-  // const openSignUpModal = () => popup.show();
-  // const closeSignUpModal = () => popup.hide();
+  const openSignInModal = () => setIsSignIn(true);
+  const closeSignInModal = () => setIsSignIn(false);
+
+  const openSignUpModal = () => setIsSignUp(true);
+  const closeSignUpModal = () => setIsSignUp(false);
 
   return (
     <>
       <div className="p-1 d-flex align-items-center justify-content-center gap-2 bg-light rounded-pill">
-        <SignInButton text="Sign in" />
-        <SignUpButton text="Sign up" />
+        <SignInButton text="Sign in" action={openSignInModal}/>
+        <SignUpButton text="Sign up" action={openSignUpModal}/>
       </div>
-      {/* <Popup  */}
-      {/* isOpen={signUp}  */}
-      {/* onClose={closeSignUpModal}> */}
-        {/* <h1 className="text-light">Hello world</h1> */}
-      {/* </Popup> */}
+      <MainModal isOpen={isSignUp} onClose={closeSignUpModal}>
+        <SignUpModal onClose={closeSignUpModal}/>        
+      </MainModal>
     </>
   );
 };
