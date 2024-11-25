@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React from "react";
 import {
   CloseButton,
   ModalBody,
@@ -7,21 +6,22 @@ import {
   ModalFooter,
   ModalTitle,
 } from "react-bootstrap";
+import { LinkButton } from "./Buttons";
 import SignUpForm from "./SignUpForm";
 
-const SignUpModal = ({ onClose }) => {
+const SignUpModal = ({ onClose, onChange }) => {
   return (
     <>
-      <ModalHeader>
+      <ModalHeader className="position-static">
         <ModalTitle>Sign up</ModalTitle>
         <CloseButton onClick={onClose} />
       </ModalHeader>
-      <ModalBody className="px-5">
+      <ModalBody className="px-5 position-static">
         <SignUpForm onClose={onClose} />
       </ModalBody>
       <ModalFooter>
         <p>Already have an account?</p>
-        <span>Sign in</span>
+        <LinkButton text="Sign in" action={onChange} />
       </ModalFooter>
     </>
   );

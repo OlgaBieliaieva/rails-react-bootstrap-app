@@ -36,13 +36,20 @@ export const AddButton = ({ action, text }) => {
   );
 };
 
-export const SubmitFormButton = ({ action, text }) => {
+export const SubmitFormButton = ({ text }) => {
   return (
     <button
-      type="button"
-      onClick={action}
+      type="submit"
       className="px-3 py-2 border-2 border-dark rounded-pill bg-transparent text-dark text-uppercase"
     >
+      {text}
+    </button>
+  );
+};
+
+export const LinkButton = ({ text, action }) => {
+  return (
+    <button type="submit" onClick={action} className="btn btn-link p-0 m-0">
       {text}
     </button>
   );

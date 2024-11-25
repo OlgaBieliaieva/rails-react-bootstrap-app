@@ -9,6 +9,8 @@ Rails.application.routes.draw do
       get "categories/show/:id", to: "categories#show"
       get "areas/index"
       get "ingredients/index"
+      get "users/index"
+      post "users/create"
     end
   end
   root "homepage#index"

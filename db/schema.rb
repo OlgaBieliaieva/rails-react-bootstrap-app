@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2024_11_21_105655) do
+ActiveRecord::Schema[8.0].define(version: 2024_11_25_121740) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -54,6 +54,18 @@ ActiveRecord::Schema[8.0].define(version: 2024_11_21_105655) do
 
   create_table "testimonials", force: :cascade do |t|
     t.text "testimonial"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "users", force: :cascade do |t|
+    t.string "name"
+    t.string "avatar"
+    t.string "email"
+    t.string "password"
+    t.jsonb "followers", default: []
+    t.jsonb "followings", default: []
+    t.jsonb "favorite_recipes", default: []
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
