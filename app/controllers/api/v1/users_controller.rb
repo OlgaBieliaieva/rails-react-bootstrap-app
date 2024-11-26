@@ -1,4 +1,5 @@
 class Api::V1::UsersController < ApplicationController
+  before_action :authenticate_api_v1_user!
   def index
     users = User.all.order(created_at: :asc)
     render json: users
@@ -11,6 +12,10 @@ class Api::V1::UsersController < ApplicationController
     else
       render json: { errors: user.errors.full_messages }, status: :unprocessable_entity
     end
+  end
+
+  def profile
+    render json: current_api_v1_user, status: :ok
   end
 
   private

@@ -1,6 +1,13 @@
 Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
+      devise_for :users, defaults: { format: :json },
+      controllers: {
+                         registrations: "api/v1/users/registrations",
+                         sessions: "api/v1/users/sessions"
+                       }
+
+      get "users/profile", to: "users#profile"
       get "recipes/index"
       post "recipes/create"
       get "recipes/show/:id", to: "recipes#show"
@@ -10,7 +17,7 @@ Rails.application.routes.draw do
       get "areas/index"
       get "ingredients/index"
       get "users/index"
-      post "users/create"
+      # post "users/create"
     end
   end
   root "homepage#index"
