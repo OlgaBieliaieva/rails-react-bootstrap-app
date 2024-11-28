@@ -6,6 +6,7 @@ import {
   useParams,
   useSearchParams,
 } from "react-router-dom";
+import axios from "axios";
 import Header from "../components/Header";
 import { AddButton } from "../components/Buttons";
 import Select from "../components/Select";
@@ -24,56 +25,52 @@ const Recipes = () => {
   const [ingredients, setIngredients] = useState("");
 
   useEffect(() => {
-    const url = `/api/v1/recipes/index/${location.search ?? location.search}`;
-    fetch(url)
-      .then((res) => {
-        if (res.ok) {
-          return res.json();
-        }
-        throw new Error("Network response was not ok.");
-      })
-      .then((res) => setRecipes(res))
-      .catch(() => navigate("/"));
+    fetchRecipes();
   }, [location.search]);
 
   useEffect(() => {
-    const url = "/api/v1/categories/index";
-    fetch(url)
-      .then((res) => {
-        if (res.ok) {
-          return res.json();
-        }
-        throw new Error("Network response was not ok.");
-      })
-      .then((res) => setCategories(res))
-      .catch((err) => console.log(err));
+    fetchCategories();
+    fetchAreas();
+    fetchIngredients();
   }, []);
 
-  useEffect(() => {
-    const url = `/api/v1/areas/index`;
-    fetch(url)
-      .then((res) => {
-        if (res.ok) {
-          return res.json();
-        }
-        throw new Error("Network response was not ok.");
-      })
-      .then((res) => setAreas(res))
-      .catch(() => navigate("/"));
-  }, []);
+  async function fetchRecipes() {
+    try {
+      const response = await axios.get(
+        `/api/v1/recipes/index/${location.search ?? location.search}`
+      );
+      setRecipes(response.data);
+    } catch (error) {
+      console.error("Error fetching recipes:", error.message);
+    }
+  }
 
-  useEffect(() => {
-    const url = `/api/v1/ingredients/index`;
-    fetch(url)
-      .then((res) => {
-        if (res.ok) {
-          return res.json();
-        }
-        throw new Error("Network response was not ok.");
-      })
-      .then((res) => setIngredients(res))
-      .catch(() => navigate("/"));
-  }, []);
+  async function fetchCategories() {
+    try {
+      const response = await axios.get("/api/v1/categories/index");
+      setCategories(response.data);
+    } catch (error) {
+      console.error("Error fetching categories:", error.message);
+    }
+  }
+
+  async function fetchAreas() {
+    try {
+      const response = await axios.get("/api/v1/areas/index");
+      setAreas(response.data);
+    } catch (error) {
+      console.error("Error fetching areas:", error.message);
+    }
+  }
+
+  async function fetchIngredients() {
+    try {
+      const response = await axios.get("/api/v1/ingredients/index");
+      setIngredients(response.data);
+    } catch (error) {
+      console.error("Error fetching ingredients:", error.message);
+    }
+  }
 
   const handleSelect = (name = null, value = "All") => {
     if (name === "category") {

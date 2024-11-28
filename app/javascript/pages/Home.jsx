@@ -1,24 +1,24 @@
 import React, { useState, useEffect } from "react";
+import axios from "axios";
 import Header from "../components/Header";
 import Hero from "../components/Hero";
 import Categories from "../components/Categories";
 
 export default () => {
   const [categories, setCategories] = useState([]);
-  
 
   useEffect(() => {
-    const url = "/api/v1/categories/index";
-    fetch(url)
-      .then((res) => {
-        if (res.ok) {
-          return res.json();
-        }
-        throw new Error("Network response was not ok.");
-      })
-      .then((res) => setCategories(res))
-      .catch((err) => console.log(err));
+    fetchCategories();
   }, []);
+
+  async function fetchCategories() {
+    try {
+      const response = await axios.get("/api/v1/categories/index");
+      setCategories(response.data);
+    } catch (error) {
+      console.error("Error fetching categories:", error.message);
+    }
+  }
 
   return (
     <div className="w-100 p-4 primary-color d-flex flex-column align-items-center justify-content-center">
@@ -27,7 +27,6 @@ export default () => {
         <Hero />
       </div>
       <Categories categories={categories} />
-      
     </div>
   );
 };

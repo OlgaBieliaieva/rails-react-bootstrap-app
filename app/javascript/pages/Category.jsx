@@ -6,6 +6,7 @@ import {
   useParams,
   useSearchParams,
 } from "react-router-dom";
+import axios from "axios";
 import Header from "../components/Header";
 import { AddButton } from "../components/Buttons";
 import Select from "../components/Select";
@@ -24,48 +25,45 @@ const Category = () => {
   const [recipes, setRecipes] = useState("");
 
   useEffect(() => {
-    const url = `/api/v1/categories/show/${params.id}${
-      location.search ?? location.search
-    }`;
-    fetch(url)
-      .then((res) => {
-        if (res.ok) {
-          return res.json();
-        }
-        throw new Error("Network response was not ok.");
-      })
-      .then((res) => {
-        setCategory(res.category);
-        setRecipes(res.recipes);
-      })
-      .catch(() => navigate("/"));
+    fetchCategory();
   }, [params.id, location.search]);
 
   useEffect(() => {
-    const url = `/api/v1/areas/index`;
-    fetch(url)
-      .then((res) => {
-        if (res.ok) {
-          return res.json();
-        }
-        throw new Error("Network response was not ok.");
-      })
-      .then((res) => setAreas(res))
-      .catch(() => navigate("/"));
+    fetchAreas();
+    fetchIngredients();
   }, []);
 
-  useEffect(() => {
-    const url = `/api/v1/ingredients/index`;
-    fetch(url)
-      .then((res) => {
-        if (res.ok) {
-          return res.json();
-        }
-        throw new Error("Network response was not ok.");
-      })
-      .then((res) => setIngredients(res))
-      .catch(() => navigate("/"));
-  }, []);
+  async function fetchCategory() {
+    try {
+      const response = await axios.get(
+        `/api/v1/categories/show/${params.id}${
+          location.search ?? location.search
+        }`
+      );
+      setCategory(response.data.category);
+      setRecipes(response.data.recipes);
+    } catch (error) {
+      console.error("Error fetching areas:", error.message);
+    }
+  }
+
+  async function fetchAreas() {
+    try {
+      const response = await axios.get("/api/v1/areas/index");
+      setAreas(response.data);
+    } catch (error) {
+      console.error("Error fetching areas:", error.message);
+    }
+  }
+
+  async function fetchIngredients() {
+    try {
+      const response = await axios.get("/api/v1/ingredients/index");
+      setIngredients(response.data);
+    } catch (error) {
+      console.error("Error fetching ingredients:", error.message);
+    }
+  }
 
   const handleSelect = (name = null, value = "All") => {
     if (name === "area") {

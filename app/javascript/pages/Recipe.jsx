@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
+import axios from "axios";
 import Header from "../components/Header";
 
 const Recipe = () => {
@@ -12,21 +13,18 @@ const Recipe = () => {
     "https://res.cloudinary.com/de3wlojzp/image/upload/v1732287644/no-ingr_xcxuye.png";
 
   useEffect(() => {
-    const url = `/api/v1/recipes/show/${params.id}`;
-    fetch(url)
-      .then((response) => {
-        if (response.ok) {
-          return response.json();
-        }
-        throw new Error("Network response was not ok.");
-      })
-      .then((response) => {
-        setRecipe(response.recipe);
-        setIngredients(response.expanded_ingredients);
-      })
-      .catch(() => navigate("/recipes"));
+    fetchRecipe();
   }, [params.id]);
-  
+
+  async function fetchRecipe() {
+    try {
+      const response = await axios.get(`/api/v1/recipes/show/${params.id}`);
+      setRecipe(response.data.recipe);
+      setIngredients(response.data.expanded_ingredients);
+    } catch (error) {
+      console.error("Error fetching recipe:", error.message);
+    }
+  }
 
   const addHtmlEntities = (str) => {
     return String(str).replace(/&lt;/g, "<").replace(/&gt;/g, ">");
