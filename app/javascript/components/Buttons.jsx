@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 export const SignUpButton = ({ action, text }) => {
   return (
@@ -24,15 +25,14 @@ export const SignInButton = ({ action, text }) => {
   );
 };
 
-export const AddButton = ({ action, text }) => {
+export const AddLinkButton = ({ path, text }) => {
   return (
-    <button
-      type="button"
-      onClick={action}
-      className="px-3 py-2 border-2 border-light rounded-pill bg-transparent text-light text-uppercase"
+    <Link
+      to={path}
+      className="btn px-3 py-2 border-2 border-light rounded-pill bg-transparent text-light text-uppercase"
     >
       {text}
-    </button>
+    </Link>
   );
 };
 

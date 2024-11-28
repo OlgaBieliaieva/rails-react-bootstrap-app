@@ -8,7 +8,7 @@ import {
 } from "react-router-dom";
 import axios from "axios";
 import Header from "../components/Header";
-import { AddButton } from "../components/Buttons";
+import { AddLinkButton } from "../components/Buttons";
 import Select from "../components/Select";
 import RecipesList from "../components/RecipesList";
 import { BsArrowLeftShort } from "react-icons/bs";
@@ -93,7 +93,7 @@ const Category = () => {
             {category.name}
           </h1>
           <p className="text-light text-center fs-4">{category.description}</p>
-          <AddButton text="Add recipe" />
+          <AddLinkButton path={"/recipe/new"} text="Add recipe" />
         </div>
       </div>
       <div className="w-100 d-flex flex-column gap-3 pt-3 px-5">
