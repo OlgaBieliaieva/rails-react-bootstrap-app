@@ -4,6 +4,8 @@ import axios from "axios";
 import { Form, FormGroup, FormControl, FloatingLabel } from "react-bootstrap";
 import { Formik, FieldArray } from "formik";
 import * as Yup from "yup";
+import { BsTrash3 } from "react-icons/bs";
+import { BsPlus } from "react-icons/bs";
 import { SubmitFormButton } from "./Buttons";
 
 const validationSchema = Yup.object().shape({
@@ -18,14 +20,17 @@ const validationSchema = Yup.object().shape({
     .required("Description is required"),
   category: Yup.string().required("Category is required"),
   area: Yup.string().required("Area is required"),
-  // ingredients: Yup.array().of(
-  //   Yup.object().shape({
-  //     name: Yup.string().required("Choose ingredient"),
-  //     measure: Yup.string().required("Type quantity"),
-  //   })
-  // ),
+  ingredients: Yup.array().of(
+    Yup.object().shape({
+      name: Yup.string(),
+      // .required("Choose ingredient"),
+      measure: Yup.string(),
+      // .required("Type quantity"),
+    })
+  ),
   time: Yup.string().required("Time is required"),
   instructions: Yup.string()
+    .min(3, "Instructions must be at least 3 characters")
     .max(999, "Instructions must be no more 999 characters")
     .required("Instructions is required"),
 });
@@ -92,87 +97,67 @@ const NewRecipeForm = () => {
       .replace(/>/g, "&gt;");
   };
 
-  const stringToArray = (str) => {
-    return str.split(",");
+  const handleSubmit = (values, { resetForm }) => {
+    console.log(values);
+
+    // const url = "/api/v1/recipes/create";
+
+    // if (
+    //   title.length == 0 ||
+    //   category.length == 0 ||
+    //   area.length == 0 ||
+    //   description.length == 0 ||
+    //   time.length == 0 ||
+    //   thumb.length == 0 ||
+    //   ingredients.length == 0 ||
+    //   instructions.length == 0
+    // )
+    //   return;
+
+    // const body = {
+    //   title,
+    //   category,
+    //   area,
+    //   ingredients: stringToArray(ingredients),
+    //   time,
+    //   thumb,
+    //   description: stripHtmlEntities(description),
+    //   instructions: stripHtmlEntities(instructions),
+    // };
+    // console.log(body);
+
+    // const token = document.querySelector('meta[name="csrf-token"]').content;
+    // fetch(url, {
+    //   method: "POST",
+    //   headers: {
+    //     "X-CSRF-Token": token,
+    //     "Content-Type": "application/json",
+    //   },
+    //   body: JSON.stringify(body),
+    // })
+    //   .then((response) => {
+    //     if (response.ok) {
+    //       return response.json();
+    //     }
+    //     throw new Error("Network response was not ok.");
+    //   })
+    //   .then((response) => navigate(`/recipe/${response.id}`))
+    //   .catch((error) => console.log(error.message));
   };
-
-  const onChange = (event, setFunction) => {
-    setFunction(event.target.value);
-  };
-
-  const onSubmit = (event) => {
-    event.preventDefault();
-    const url = "/api/v1/recipes/create";
-
-    if (
-      title.length == 0 ||
-      category.length == 0 ||
-      area.length == 0 ||
-      description.length == 0 ||
-      time.length == 0 ||
-      thumb.length == 0 ||
-      ingredients.length == 0 ||
-      instructions.length == 0
-    )
-      return;
-
-    const body = {
-      title,
-      category,
-      area,
-      ingredients: stringToArray(ingredients),
-      time,
-      thumb,
-      description: stripHtmlEntities(description),
-      instructions: stripHtmlEntities(instructions),
-    };
-    console.log(body);
-
-    const token = document.querySelector('meta[name="csrf-token"]').content;
-    fetch(url, {
-      method: "POST",
-      headers: {
-        "X-CSRF-Token": token,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(body),
-    })
-      .then((response) => {
-        if (response.ok) {
-          return response.json();
-        }
-        throw new Error("Network response was not ok.");
-      })
-      .then((response) => navigate(`/recipe/${response.id}`))
-      .catch((error) => console.log(error.message));
-  };
-
-  //   const allCategories = categories?.map((item, index) => (
-  //     <option
-  //       key={index}
-  //       value={item.name}
-  //       id={`${item.db_id ? item.db_id : item.id}`}
-  //     >
-  //       {item.name}
-  //     </option>
-  //   ));
-  console.log(categories);
-  console.log(areas);
-  console.log(ingredientsList);
 
   return (
     <div className="w-100 container container-fluid">
       <Formik
         validationSchema={validationSchema}
-        // onSubmit={handleSubmit}
+        onSubmit={handleSubmit}
         initialValues={initialValues}
       >
         {({ handleSubmit, handleChange, values, touched, errors }) => (
           <Form
             id="add-recipe-form"
-            className="d-flex flex-column align-items-center justify-content-center gap-4 w-100"
+            className="d-flex flex-column align-items-center justify-content-center gap-5 w-100 mb-5"
             noValidate
-            // onSubmit={handleSubmit}
+            onSubmit={handleSubmit}
           >
             <FormGroup controlId="title" className="w-100">
               <FloatingLabel
@@ -183,14 +168,12 @@ const NewRecipeForm = () => {
               >
                 <FormControl
                   as="textarea"
-                  rows={3}
+                  rows={2}
                   name="title"
                   value={values.title}
-                  className="form-control w-100"
+                  className="form-control w-100 border-0 border-bottom rounded-0"
                   style={{
-                    resize: "none",
                     paddingRight: 68,
-                    height: "fit-content",
                   }}
                   placeholder="Title"
                   isInvalid={!!errors.title}
@@ -220,11 +203,9 @@ const NewRecipeForm = () => {
                   rows={6}
                   name="description"
                   value={values.description}
-                  className="form-control w-100"
+                  className="form-control w-100 border-0 border-bottom rounded-0"
                   style={{
-                    resize: "none",
                     paddingRight: 68,
-                    height: "fit-content",
                   }}
                   placeholder="description"
                   isInvalid={!!errors.description}
@@ -243,7 +224,7 @@ const NewRecipeForm = () => {
               </FormControl.Feedback>
             </FormGroup>
             <div className="container container-fluid">
-              <div className="row row-cols-1 row-cols-md-2 row-gap-3">
+              <div className="row row-cols-1 row-cols-md-2 justify-content-between">
                 <FormGroup controlId="category" className="col">
                   <FloatingLabel
                     id="new-recipe-category"
@@ -310,17 +291,23 @@ const NewRecipeForm = () => {
                 </FormGroup>
               </div>
             </div>
-            <FormGroup controlId="ingredient" className="col">
+            <FormGroup
+              controlId="ingredients"
+              className="container container-fluid"
+            >
               <FieldArray name="ingredients">
                 {({ insert, remove, push }) => (
                   <>
                     {values.ingredients.length > 0 &&
                       values.ingredients.map((ingredient, index) => (
-                        <div key={index} className="container container-fluid">
-                          <div className="row row-cols-1 row-cols-md-2 row-gap-3">
+                        <div
+                          key={index}
+                          className="row row-cols-1 row-cols-md-2 justify-content-between mb-3"
+                        >
+                          <div className="col-md-5">
                             <FloatingLabel
                               id={`ingredients.${index}.name`}
-                              controlId="ingredient"
+                              controlId={`ingredients.${index}.name`}
                               label="Recipe ingredient"
                               className="w-100"
                             >
@@ -328,8 +315,10 @@ const NewRecipeForm = () => {
                                 name={`ingredients.${index}.name`}
                                 // value={`ingredients.${index}.name`}
                                 className="form-control w-100 border-0 border-bottom rounded-0"
-                                isInvalid={!!errors.area}
-                                isValid={touched.area && !errors.area}
+                                isInvalid={!!errors.ingredients}
+                                isValid={
+                                  touched.ingredients && !errors.ingredients
+                                }
                                 onChange={handleChange}
                               >
                                 <option className="text-muted">
@@ -352,202 +341,123 @@ const NewRecipeForm = () => {
                             <FormControl.Feedback type="invalid">
                               {errors.ingredients}
                             </FormControl.Feedback>
+                          </div>
+                          <div className="col-md-5">
                             <FloatingLabel
                               id={`ingredients.${index}.measure`}
-                              controlId="ingredient-measure"
-                              label="Ingredient quantity"
+                              controlId={`ingredients.${index}.measure`}
+                              label="Type ingredient quantity"
                               className="w-100"
                             >
                               <FormControl
                                 name={`ingredients.${index}.measure`}
                                 // value={values.title}
-                                className="form-control"
+                                className="form-control border-0 border-bottom rounded-0"
                                 // style={{
                                 //   resize: "none",
                                 //   paddingRight: 68,
                                 //   height: "fit-content",
                                 // }}
                                 placeholder="Type ingredient quantity"
-                                isInvalid={!!errors.title}
-                                isValid={touched.title && !errors.title}
+                                isInvalid={!!errors.ingredients}
+                                isValid={
+                                  touched.ingredients && !errors.ingredients
+                                }
                                 onChange={handleChange}
                               />
                             </FloatingLabel>
                             <FormControl.Feedback type="invalid">
-                              {errors.title}
+                              {errors.ingredients}
                             </FormControl.Feedback>
-                            {/* <label
-                            htmlFor={`anotherColors.${index}.manufacturerCode`}
-                            className={styles.formLabel}
-                          >
-                            Артикул виробника
-                            <Field
-                              className={styles.formInput}
-                              type="text"
-                              id={`anotherColors.${index}.manufacturerCode`}
-                              name={`anotherColors.${index}.manufacturerCode`}
-                              placeholder="Введіть артикул з коробки..."
-                            />
-                            <ErrorMessage
-                              name={`anotherColors.${index}.manufacturerCode`}
-                            >
-                              {(message) => (
-                                <p className={styles.errorText}>{message}</p>
-                              )}
-                            </ErrorMessage>
-                          </label> */}
-
-                            {/* <button type="button" onClick={() => remove(index)}>
-                            <CrossSmallIcon />
-                          </button> */}
                           </div>
+                          <button
+                            className="btn col-md-auto"
+                            type="button"
+                            onClick={() => remove(index)}
+                          >
+                            <BsTrash3 />
+                          </button>
                         </div>
                       ))}
-                    {/* <button
-                    className={styles.downloadButton}
-                    type="button"
-                    onClick={() =>
-                      push({ colorName: "", manufacturerCode: "" })
-                    }
-                  >
-                    Додати колір
-                  </button> */}
+                    <button
+                      className="btn px-3 py-2 border-2 border-dark rounded-pill bg-transparent text-uppercase"
+                      type="button"
+                      onClick={() => push({ ingredient: "", measure: "" })}
+                    >
+                      <BsPlus />
+                      <span>Add ingredient</span>
+                    </button>
                   </>
                 )}
               </FieldArray>
             </FormGroup>
-            {/* <FormGroup controlId="email" className="w-100">
-              <FormControl
-                type="email"
-                name="email"
-                value={values.email}
-                className="form-control w-100 rounded-pill"
-                placeholder="Email"
-                isValid={touched.email && !errors.email}
-                isInvalid={!!errors.email}
-                onChange={handleChange}
-              />
+            <FormGroup controlId="time" className="w-100">
+              <FloatingLabel
+                id="new-recipe-time"
+                controlId="time"
+                label="Cooking time"
+                className="w-100"
+              >
+                <FormControl
+                  name="time"
+                  value={values.time}
+                  className="form-control w-100 pe-5"
+                  placeholder="Time"
+                  isInvalid={!!errors.time}
+                  isValid={touched.time && !errors.time}
+                  onChange={handleChange}
+                />
+                <span
+                  className="position-absolute fs-6 text-muted"
+                  style={{ top: 20, right: 12 }}
+                >
+                  min
+                </span>
+              </FloatingLabel>
               <FormControl.Feedback type="invalid">
-                {errors.email}
+                {errors.time}
               </FormControl.Feedback>
             </FormGroup>
-            <FormGroup controlId="password" className="w-100">
-              <FormControl
-                type="password"
-                name="password"
-                value={values.password}
-                className="form-control w-100 rounded-pill"
-                placeholder="Password"
-                isValid={touched.password && !errors.password}
-                isInvalid={!!errors.password}
-                onChange={handleChange}
-              />
+            <FormGroup controlId="instructions" className="w-100">
+              <FloatingLabel
+                id="new-recipe-instructions"
+                controlId="instructions"
+                label="Recipe instructions"
+                className="w-100"
+              >
+                <FormControl
+                  as="textarea"
+                  rows={6}
+                  name="instructions"
+                  value={values.instructions}
+                  className="form-control w-100"
+                  style={{
+                    paddingRight: 68,
+                  }}
+                  placeholder="instructions"
+                  isInvalid={!!errors.instructions}
+                  isValid={touched.instructions && !errors.instructions}
+                  onChange={handleChange}
+                />
+                <span
+                  className="position-absolute fs-6 text-muted"
+                  style={{ top: 20, right: 12 }}
+                >
+                  {values.instructions.length}/999
+                </span>
+              </FloatingLabel>
               <FormControl.Feedback type="invalid">
-                {errors.password}
+                {errors.instructions}
               </FormControl.Feedback>
-            </FormGroup> */}
+            </FormGroup>
 
-            {/* <SubmitFormButton text="Create" /> */}
+            <div className="w-100 d-flex align-items-center justify-content-center gap-3 ">
+              <SubmitFormButton type="submit" text="Create" />
+              <SubmitFormButton type="reset" text="Reset" />
+            </div>
           </Form>
         )}
       </Formik>
-      <form onSubmit={onSubmit}>
-        <div className="form-group">
-          <label htmlFor="recipeTitle">Recipe title</label>
-          <input
-            type="text"
-            name="title"
-            id="recipeTitle"
-            className="form-control"
-            required
-            onChange={(event) => onChange(event, setTitle)}
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="recipeCategory">Recipe category</label>
-          <input
-            type="text"
-            name="category"
-            id="recipeCategory"
-            className="form-control"
-            required
-            onChange={(event) => onChange(event, setCategory)}
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="recipeArea">Recipe area </label>
-          <input
-            type="text"
-            name="area"
-            id="recipeArea"
-            className="form-control"
-            required
-            onChange={(event) => onChange(event, setArea)}
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="recipeDescription">Recipe description </label>
-          <input
-            type="text"
-            name="description"
-            id="recipeDescription"
-            className="form-control"
-            required
-            onChange={(event) => onChange(event, setDescription)}
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="recipeIngredients">Ingredients</label>
-          <input
-            type="text"
-            name="ingredients"
-            id="recipeIngredients"
-            className="form-control"
-            required
-            onChange={(event) => onChange(event, setIngredients)}
-          />
-          <small id="ingredientsHelp" className="form-text text-muted">
-            Separate each ingredient with a comma.
-          </small>
-        </div>
-        <div className="form-group">
-          <label htmlFor="recipeTime">Time</label>
-          <input
-            type="text"
-            name="time"
-            id="recipeTime"
-            className="form-control"
-            required
-            onChange={(event) => onChange(event, setTime)}
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="recipeThumb">Photo</label>
-          <input
-            type="text"
-            name="thumb"
-            id="recipeThumb"
-            className="form-control"
-            required
-            onChange={(event) => onChange(event, setThumb)}
-          />
-        </div>
-        <label htmlFor="instructions">Preparation Instructions</label>
-        <textarea
-          className="form-control"
-          id="instructions"
-          name="instructions"
-          rows="5"
-          required
-          onChange={(event) => onChange(event, setInstructions)}
-        />
-        <button type="submit" className="btn custom-button mt-3">
-          Create Recipe
-        </button>
-        <Link to="/recipes" className="btn btn-link mt-3">
-          Back to recipes
-        </Link>
-      </form>
     </div>
   );
 };

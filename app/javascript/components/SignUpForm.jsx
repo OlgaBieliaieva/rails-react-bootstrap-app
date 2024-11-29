@@ -162,7 +162,7 @@ const SignUpForm = ({ onClose }) => {
               </FormControl.Feedback>
             </FormGroup>
 
-            <SubmitFormButton text="Create" />
+            <SubmitFormButton type="submit" text="Create" />
           </Form>
         )}
       </Formik>

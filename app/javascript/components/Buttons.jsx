@@ -36,11 +36,13 @@ export const AddLinkButton = ({ path, text }) => {
   );
 };
 
-export const SubmitFormButton = ({ text }) => {
+export const SubmitFormButton = ({ type, text }) => {
   return (
     <button
-      type="submit"
-      className="px-3 py-2 border-2 border-dark rounded-pill bg-transparent text-dark text-uppercase"
+      type={type}
+      className={`btn px-3 py-2 w-25 border-0 ${
+        type === "reset" ? "bg-danger" : "bg-dark"
+      } rounded-pill text-white text-uppercase`}
     >
       {text}
     </button>
