@@ -1,7 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { Form, FormGroup, FormControl, FloatingLabel } from "react-bootstrap";
+import {
+  Form,
+  FormGroup,
+  FormControl,
+  FloatingLabel,
+  FormLabel,
+} from "react-bootstrap";
 import { Formik, FieldArray } from "formik";
 import * as Yup from "yup";
 import { BsTrash3 } from "react-icons/bs";
@@ -9,7 +15,7 @@ import { BsPlus } from "react-icons/bs";
 import { SubmitFormButton } from "./Buttons";
 
 const validationSchema = Yup.object().shape({
-  //   thumb: Yup.string(),
+  thumb: Yup.mixed(),
   title: Yup.string()
     .min(3, "Title must be at least 3 characters")
     .max(100, "Title must be no more 100 characters")
@@ -23,9 +29,7 @@ const validationSchema = Yup.object().shape({
   ingredients: Yup.array().of(
     Yup.object().shape({
       name: Yup.string(),
-      // .required("Choose ingredient"),
       measure: Yup.string(),
-      // .required("Type quantity"),
     })
   ),
   time: Yup.string().required("Time is required"),
@@ -36,7 +40,7 @@ const validationSchema = Yup.object().shape({
 });
 
 let initialValues = {
-  //   thumb: "",
+  thumb: "",
   title: "",
   description: "",
   category: "",
@@ -53,6 +57,7 @@ let initialValues = {
 
 const NewRecipeForm = () => {
   const navigate = useNavigate();
+  const [imagePreview, setImagePreview] = useState(null);
   const [categories, setCategories] = useState("");
   const [areas, setAreas] = useState("");
   const [ingredientsList, setIngredientsList] = useState("");
@@ -90,59 +95,32 @@ const NewRecipeForm = () => {
     }
   }
 
-  const stripHtmlEntities = (str) => {
-    return String(str)
-      .replace(/\n/g, "<br> <br>")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;");
-  };
-
-  const handleSubmit = (values, { resetForm }) => {
+  const handleSubmit = async (values, { resetForm }) => {
     console.log(values);
 
-    // const url = "/api/v1/recipes/create";
+    const formData = new FormData();
+    formData.append("title", values.title);
+    formData.append("description", values.description);
+    formData.append("thumb", values.thumb);
+    formData.append("category", values.category);
+    formData.append("area", values.area);
+    formData.append("ingredients", JSON.stringify(values.ingredients));
+    formData.append("time", values.time);
+    formData.append("instructions", values.instructions);
+    console.log(formData);
 
-    // if (
-    //   title.length == 0 ||
-    //   category.length == 0 ||
-    //   area.length == 0 ||
-    //   description.length == 0 ||
-    //   time.length == 0 ||
-    //   thumb.length == 0 ||
-    //   ingredients.length == 0 ||
-    //   instructions.length == 0
-    // )
-    //   return;
-
-    // const body = {
-    //   title,
-    //   category,
-    //   area,
-    //   ingredients: stringToArray(ingredients),
-    //   time,
-    //   thumb,
-    //   description: stripHtmlEntities(description),
-    //   instructions: stripHtmlEntities(instructions),
-    // };
-    // console.log(body);
-
-    // const token = document.querySelector('meta[name="csrf-token"]').content;
-    // fetch(url, {
-    //   method: "POST",
-    //   headers: {
-    //     "X-CSRF-Token": token,
-    //     "Content-Type": "application/json",
-    //   },
-    //   body: JSON.stringify(body),
-    // })
-    //   .then((response) => {
-    //     if (response.ok) {
-    //       return response.json();
-    //     }
-    //     throw new Error("Network response was not ok.");
-    //   })
-    //   .then((response) => navigate(`/recipe/${response.id}`))
-    //   .catch((error) => console.log(error.message));
+    try {
+      const response = await axios.post("/api/v1/recipes/create", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Accept: "application/json",
+        },
+      });
+      console.log(response);
+      resetForm();
+    } catch (error) {
+      console.error("Error creating recipe:", error);
+    }
   };
 
   return (
@@ -152,13 +130,71 @@ const NewRecipeForm = () => {
         onSubmit={handleSubmit}
         initialValues={initialValues}
       >
-        {({ handleSubmit, handleChange, values, touched, errors }) => (
+        {({
+          handleSubmit,
+          handleChange,
+          setFieldValue,
+          values,
+          touched,
+          errors,
+          resetForm
+        }) => (
           <Form
             id="add-recipe-form"
             className="d-flex flex-column align-items-center justify-content-center gap-5 w-100 mb-5"
             noValidate
             onSubmit={handleSubmit}
           >
+            <FormGroup controlId="thumb" className="w-100">
+              {imagePreview ? (
+                <div
+                  className="w-100 container container-fluid d-flex flex-column align-items-center justify-content-center overflow-hidden p-0 m-0 mb-3"
+                  style={{ borderRadius: 30 }}
+                >
+                  <img
+                    src={imagePreview}
+                    alt="Preview"
+                    style={{
+                      width: "100%",
+                      maxHeight: 400,
+                      objectFit: "cover",
+                    }}
+                  />
+                </div>
+              ) : (
+                <div
+                  className="w-100 container container-fluid d-flex flex-column align-items-center justify-content-center overflow-hidden p-0 m-0 mb-3"
+                  style={{ width: "100%", maxHeight: 400, borderRadius: 30 }}
+                >
+                  <img
+                    className="img-fluid"
+                    src="https://res.cloudinary.com/de3wlojzp/image/upload/v1732287644/no-ingr_xcxuye.png"
+                    alt="Preview"
+                    style={{ maxWidth: 200, maxHeight: 200 }}
+                  />
+                </div>
+              )}
+              <FormLabel className="w-100">
+                <FormControl
+                  type="file"
+                  name="thumb"
+                  className="form-control w-100"
+                  style={{
+                    paddingRight: 68,
+                  }}
+                  isInvalid={!!errors.thumb}
+                  isValid={touched.thumb && !errors.thumb}
+                  onChange={(event) => {
+                    setFieldValue("thumb", event.target.files[0]);
+                    const imageUrl = URL.createObjectURL(event.target.files[0]);
+                    setImagePreview(imageUrl);
+                  }}
+                />
+              </FormLabel>
+              <FormControl.Feedback type="invalid">
+                {errors.thumb}
+              </FormControl.Feedback>
+            </FormGroup>
             <FormGroup controlId="title" className="w-100">
               <FloatingLabel
                 id="new-recipe-title"
@@ -296,7 +332,7 @@ const NewRecipeForm = () => {
               className="container container-fluid"
             >
               <FieldArray name="ingredients">
-                {({ insert, remove, push }) => (
+                {({ remove, push }) => (
                   <>
                     {values.ingredients.length > 0 &&
                       values.ingredients.map((ingredient, index) => (
@@ -313,11 +349,14 @@ const NewRecipeForm = () => {
                             >
                               <Form.Select
                                 name={`ingredients.${index}.name`}
-                                // value={`ingredients.${index}.name`}
                                 className="form-control w-100 border-0 border-bottom rounded-0"
-                                isInvalid={!!errors.ingredients}
+                                isInvalid={
+                                  !!errors.ingredients &&
+                                  !!errors.ingredients[index]?.name
+                                }
                                 isValid={
-                                  touched.ingredients && !errors.ingredients
+                                  touched.ingredients &&
+                                  !errors.ingredients?.[index]?.name
                                 }
                                 onChange={handleChange}
                               >
@@ -339,7 +378,8 @@ const NewRecipeForm = () => {
                               </Form.Select>
                             </FloatingLabel>
                             <FormControl.Feedback type="invalid">
-                              {errors.ingredients}
+                              {errors.ingredients &&
+                                errors.ingredients[index]?.name}
                             </FormControl.Feedback>
                           </div>
                           <div className="col-md-5">
@@ -351,23 +391,22 @@ const NewRecipeForm = () => {
                             >
                               <FormControl
                                 name={`ingredients.${index}.measure`}
-                                // value={values.title}
                                 className="form-control border-0 border-bottom rounded-0"
-                                // style={{
-                                //   resize: "none",
-                                //   paddingRight: 68,
-                                //   height: "fit-content",
-                                // }}
                                 placeholder="Type ingredient quantity"
-                                isInvalid={!!errors.ingredients}
+                                isInvalid={
+                                  !!errors.ingredients &&
+                                  !!errors.ingredients[index]?.measure
+                                }
                                 isValid={
-                                  touched.ingredients && !errors.ingredients
+                                  touched.ingredients &&
+                                  !errors.ingredients?.[index]?.measure
                                 }
                                 onChange={handleChange}
                               />
                             </FloatingLabel>
                             <FormControl.Feedback type="invalid">
-                              {errors.ingredients}
+                              {errors.ingredients &&
+                                errors.ingredients[index]?.measure}
                             </FormControl.Feedback>
                           </div>
                           <button
@@ -382,7 +421,7 @@ const NewRecipeForm = () => {
                     <button
                       className="btn px-3 py-2 border-2 border-dark rounded-pill bg-transparent text-uppercase"
                       type="button"
-                      onClick={() => push({ ingredient: "", measure: "" })}
+                      onClick={() => push({ name: "", measure: "" })}
                     >
                       <BsPlus />
                       <span>Add ingredient</span>
@@ -430,7 +469,7 @@ const NewRecipeForm = () => {
                   rows={6}
                   name="instructions"
                   value={values.instructions}
-                  className="form-control w-100"
+                  className="form-control w-100 border-0 border-bottom rounded-0"
                   style={{
                     paddingRight: 68,
                   }}
@@ -453,7 +492,7 @@ const NewRecipeForm = () => {
 
             <div className="w-100 d-flex align-items-center justify-content-center gap-3 ">
               <SubmitFormButton type="submit" text="Create" />
-              <SubmitFormButton type="reset" text="Reset" />
+              <SubmitFormButton type="button" text="Reset" action={resetForm} />
             </div>
           </Form>
         )}

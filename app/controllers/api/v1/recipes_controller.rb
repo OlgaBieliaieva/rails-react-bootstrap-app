@@ -1,11 +1,10 @@
 class Api::V1::RecipesController < ApplicationController
+  include Rails.application.routes.url_helpers
   before_action :set_recipe, only: %i[show destroy]
+  skip_before_action :verify_authenticity_token, only: [ :create ]
+
 
   def index
-    # Recipe.select(:title).group(:title).having("COUNT(*) > 1").each do |recipe|
-    #     duplicates = Recipe.where(title: recipe.title).order(:created_at)
-    #     duplicates.offset(1).destroy_all # Залишає перший запис, видаляє інші
-    #   end
     recipes = Recipe.all.order(created_at: :desc)
 
      if params[:category].present? && params[:category] != "All"
@@ -32,13 +31,48 @@ class Api::V1::RecipesController < ApplicationController
   end
 
   def create
-    recipe = Recipe.create!(recipe_params)
-    if recipe
-      render json: recipe
-    else
-      render json: recipe.errors
-    end
+      ingredients = JSON.parse(params[:ingredients]) rescue []
+
+      updated_ingredients = ingredients.map do |ingredient|
+        next if ingredient["name"].blank?
+
+        ingredient_record = Ingredient.find_by(name: ingredient["name"])
+        if ingredient_record
+          { id: ingredient_record.db_id, measure: ingredient["measure"] }
+        else
+          Rails.logger.warn "Ingredient not found: #{ingredient['name']}"
+          nil
+        end
+      end.compact
+
+      thumb_url = nil
+      Rails.logger.info "Thumb parameter: #{params[:thumb].inspect}"
+      if params[:thumb].present?
+        begin
+          temp_file = params[:thumb].tempfile
+          cloudinary_response = Cloudinary::Uploader.upload(temp_file.path, folder: "recipes")
+          thumb_url = cloudinary_response["secure_url"]
+        rescue StandardError => e
+          Rails.logger.error "Cloudinary upload error: #{e.message}"
+          render json: { error: "Failed to upload image" }, status: :unprocessable_entity
+          return
+        end
+      end
+
+     recipe = Recipe.new(recipe_params)
+     recipe.ingredients = updated_ingredients
+     recipe.thumb = thumb_url
+
+     if recipe.save
+        render json: {
+        message: "Recipe created successfully",
+        recipe: recipe.as_json.merge("thumb_url" => recipe.thumb)
+       }, status: :created
+     else
+       render json: { errors: recipe.errors.full_messages }, status: :unprocessable_entity
+     end
   end
+
 
   def show
     expanded_ingredients = @recipe.ingredients.map do |ingredient|
@@ -50,7 +84,7 @@ class Api::V1::RecipesController < ApplicationController
           "image" => ingredient_data.image
         )
       else
-        ingredient # Якщо інгредієнт не знайдено, повертаємо без змін
+        ingredient
       end
     end
      render json: {
@@ -67,7 +101,7 @@ class Api::V1::RecipesController < ApplicationController
   private
 
   def recipe_params
-    params.permit(:title, :category, :area, :instructions, :description, :thumb, :time, :ingredients)
+    params.permit(:title, :category, :area, :instructions, :description, :time, :ingredients)
   end
 
   def set_recipe
