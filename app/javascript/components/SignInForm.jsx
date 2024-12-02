@@ -7,44 +7,25 @@ import { SubmitFormButton } from "./Buttons";
 import authService from "../services/authService";
 
 const validationSchema = Yup.object().shape({
-  name: Yup.string()
-    .min(3, "Name must be at least 3 characters")
-    .max(20, "Name must be no more 20 characters")
-    .required("Name is required"),
   email: Yup.string().email("It's not email").required("Email is required"),
   password: Yup.string()
     .min(8, "Password must be at least 8 characters")
     .required("Password is required"),
-  passwordConfirm: Yup.string()
-    .oneOf([Yup.ref("password"), null], "Passwords must match")
-    .required("Password confirmation is required"),
 });
 
 let initialValues = {
-  name: "",
   email: "",
   password: "",
-  passwordConfirm: "",
 };
 
-const SignUpForm = ({ onClose }) => {
+const SignInForm = ({ onClose }) => {
   const { setUser } = useContext(UserContext);
   const [successToastIsShown, setSuccessToastIsShown] = useState(false);
   const [errorToastIsShown, setErrorToastIsShown] = useState(false);
 
-  const handleSubmit = async (
-    { name, email, password, passwordConfirm },
-    { resetForm }
-  ) => {
-    if (
-      name.trim().length === 0 ||
-      email.trim().length === 0 ||
-      password.trim().length === 0
-    ) {
-      return; // add notification
-    }
+  const handleSubmit = async ({ email, password }, { resetForm }) => {
     try {
-      const data = await authService.register(email, password, passwordConfirm);
+      const data = await authService.login(email, password);
       console.log(data);
       setUser(data.user);
       setSuccessToastIsShown(true);
@@ -52,6 +33,7 @@ const SignUpForm = ({ onClose }) => {
         onClose();
       }, 3000);
     } catch (error) {
+      console.log(error);
       setErrorToastIsShown(true); // add notification
       resetForm();
     }
@@ -105,21 +87,6 @@ const SignUpForm = ({ onClose }) => {
             noValidate
             onSubmit={handleSubmit}
           >
-            <FormGroup controlId="name" className="w-100">
-              <FormControl
-                type="text"
-                name="name"
-                value={values.name}
-                className="form-control w-100 rounded-pill"
-                placeholder="Name"
-                isInvalid={!!errors.name}
-                isValid={touched.name && !errors.name}
-                onChange={handleChange}
-              />
-              <FormControl.Feedback type="invalid">
-                {errors.name}
-              </FormControl.Feedback>
-            </FormGroup>
             <FormGroup controlId="email" className="w-100">
               <FormControl
                 type="email"
@@ -151,27 +118,11 @@ const SignUpForm = ({ onClose }) => {
               </FormControl.Feedback>
             </FormGroup>
 
-            <FormGroup controlId="passwordConfirm" className="w-100">
-              <FormControl
-                type="password"
-                name="passwordConfirm"
-                value={values.passwordConfirm}
-                className="form-control w-100 rounded-pill"
-                placeholder="Confirm password"
-                isValid={touched.passwordConfirm && !errors.passwordConfirm}
-                isInvalid={!!errors.passwordConfirm}
-                onChange={handleChange}
-              />
-              <FormControl.Feedback type="invalid">
-                {errors.passwordConfirm}
-              </FormControl.Feedback>
-            </FormGroup>
-
-            <SubmitFormButton type="submit" text="Create" />
+            <SubmitFormButton type="submit" text="Sign in" />
           </Form>
         )}
       </Formik>
     </>
   );
 };
-export default SignUpForm;
+export default SignInForm;

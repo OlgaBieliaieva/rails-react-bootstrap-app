@@ -25,6 +25,18 @@ export const SignInButton = ({ action, text }) => {
   );
 };
 
+export const SignOutButton = ({ action, text }) => {
+  return (
+    <button
+      type="button"
+      onClick={action}
+      className="px-3 py-1 border-0 rounded-pill bg-dark text-light"
+    >
+      {text}
+    </button>
+  );
+};
+
 export const AddLinkButton = ({ path, text }) => {
   return (
     <Link

@@ -6,7 +6,6 @@ import Categories from "../components/Categories";
 
 export default () => {
   const [categories, setCategories] = useState([]);
-
   useEffect(() => {
     fetchCategories();
   }, []);

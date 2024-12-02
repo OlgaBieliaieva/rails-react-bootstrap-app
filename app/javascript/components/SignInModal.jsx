@@ -7,7 +7,7 @@ import {
   ModalTitle,
 } from "react-bootstrap";
 import { LinkButton } from "./Buttons";
-// import SignUpForm from "./SignUpForm";
+import SignInForm from "./SignInForm";
 
 const SignInModal = ({ onClose, onChange }) => {
   return (
@@ -17,7 +17,7 @@ const SignInModal = ({ onClose, onChange }) => {
         <CloseButton onClick={onClose} />
       </ModalHeader>
       <ModalBody className="px-5">
-        {/* <SignUpForm onClose={onClose} /> */}
+        <SignInForm onClose={onClose} />
       </ModalBody>
       <ModalFooter>
         <p>Have no account?</p>
