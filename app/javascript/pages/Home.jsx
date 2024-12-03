@@ -3,6 +3,8 @@ import axios from "axios";
 import Header from "../components/Header";
 import Hero from "../components/Hero";
 import Categories from "../components/Categories";
+import Testimonials from "../components/Testimonials";
+import Footer from "../components/Footer";
 
 export default () => {
   const [categories, setCategories] = useState([]);
@@ -25,7 +27,11 @@ export default () => {
         <Header />
         <Hero />
       </div>
-      <Categories categories={categories} />
+      <main className="w-100">
+        <Categories categories={categories} />
+        <Testimonials />
+      </main>
+      <Footer />
     </div>
   );
 };

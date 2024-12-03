@@ -1,11 +1,4 @@
 import React, { useState } from "react";
-import {
-  Modal,
-  ModalBody,
-  ModalHeader,
-  ModalFooter,
-  ModalTitle,
-} from "react-bootstrap";
 import { SignUpButton } from "./Buttons";
 import { SignInButton } from "./Buttons";
 import MainModal from "./MainModal";

@@ -1,5 +1,4 @@
 Rails.application.routes.draw do
-  # devise_for :users
   devise_for :users, defaults: { format: :json }, controllers: {
     sessions: "users/sessions",
     registrations: "users/registrations"
@@ -14,7 +13,6 @@ Rails.application.routes.draw do
       get "categories/show/:id", to: "categories#show"
       get "areas/index"
       get "ingredients/index"
-      # get "users/index"
       get "users/current_user", to: "users#current"
     end
   end

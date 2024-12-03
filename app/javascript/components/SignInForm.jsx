@@ -26,7 +26,6 @@ const SignInForm = ({ onClose }) => {
   const handleSubmit = async ({ email, password }, { resetForm }) => {
     try {
       const data = await authService.login(email, password);
-      console.log(data);
       setUser(data.user);
       setSuccessToastIsShown(true);
       const timeoutId = setTimeout(() => {

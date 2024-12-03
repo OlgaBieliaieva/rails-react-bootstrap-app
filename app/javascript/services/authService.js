@@ -6,11 +6,15 @@ axios.defaults.headers.common["X-CSRF-Token"] =
 
 // axios.defaults.withCredentials = true;
 
-const register = async (email, password, passwordConfirmation) => {
+const register = async (name, email, password, passwordConfirmation) => {
   const response = await axios.post(`${API_URL}`, {
-    user: { email, password, password_confirmation: passwordConfirmation },
+    user: {
+      name,
+      email,
+      password,
+      password_confirmation: passwordConfirmation,
+    },
   });
-  console.log(response.data);
   return response.data;
 };
 
@@ -18,12 +22,17 @@ const login = async (email, password) => {
   const response = await axios.post(`${API_URL}/sign_in`, {
     user: { email, password },
   });
-  console.log(response.data.user.id);
   return response.data;
 };
 
 const logout = async () => {
-  await axios.delete(`${API_URL}/sign_out`);
+  await axios.delete(`${API_URL}/sign_out`, {
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  console.log("Auth Logout");
+  
 };
 
 export default { register, login, logout };

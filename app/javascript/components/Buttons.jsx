@@ -48,6 +48,18 @@ export const AddLinkButton = ({ path, text }) => {
   );
 };
 
+export const AddButton = ({ text, action }) => {
+  return (
+    <button
+      type="button"
+      onClick={action}
+      className="px-3 py-2 border-2 border-light rounded-pill bg-transparent text-light text-uppercase"
+    >
+      {text}
+    </button>
+  );
+};
+
 export const SubmitFormButton = ({ type, text, action }) => {
   return (
     <button

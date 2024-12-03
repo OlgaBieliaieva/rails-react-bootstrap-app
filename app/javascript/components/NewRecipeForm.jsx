@@ -149,7 +149,7 @@ const NewRecipeForm = () => {
               {imagePreview ? (
                 <div
                   className="w-100 container container-fluid d-flex flex-column align-items-center justify-content-center overflow-hidden p-0 m-0 mb-3"
-                  style={{ borderRadius: 30 }}
+                  style={{ borderRadius: 30}}
                 >
                   <img
                     src={imagePreview}
@@ -163,7 +163,7 @@ const NewRecipeForm = () => {
                 </div>
               ) : (
                 <div
-                  className="w-100 container container-fluid d-flex flex-column align-items-center justify-content-center overflow-hidden p-0 m-0 mb-3"
+                  className="w-100 container container-fluid d-flex flex-column align-items-center justify-content-center overflow-hidden px-0 py-4 m-0 mb-3 border border-secondary-subtle"
                   style={{ width: "100%", maxHeight: 400, borderRadius: 30 }}
                 >
                   <img

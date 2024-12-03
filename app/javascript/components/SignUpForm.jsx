@@ -44,8 +44,12 @@ const SignUpForm = ({ onClose }) => {
       return; // add notification
     }
     try {
-      const data = await authService.register(email, password, passwordConfirm);
-      console.log(data);
+      const data = await authService.register(
+        name,
+        email,
+        password,
+        passwordConfirm
+      );
       setUser(data.user);
       setSuccessToastIsShown(true);
       const timeoutId = setTimeout(() => {
