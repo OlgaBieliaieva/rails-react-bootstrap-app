@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import {
   Link,
   useNavigate,
@@ -7,14 +7,17 @@ import {
   useSearchParams,
 } from "react-router-dom";
 import axios from "axios";
+import { UserContext } from "../components/userContext";
 import Header from "../components/Header";
 import { AddLinkButton } from "../components/Buttons";
 import Select from "../components/Select";
 import RecipesList from "../components/RecipesList";
 import Footer from "../components/Footer";
 import { BsArrowLeftShort } from "react-icons/bs";
+import AddRecipe from "../components/AddRecipe";
 
 const Recipes = () => {
+  const { user } = useContext(UserContext);
   const params = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -24,6 +27,7 @@ const Recipes = () => {
   const [categories, setCategories] = useState("");
   const [areas, setAreas] = useState("");
   const [ingredients, setIngredients] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     fetchRecipes();
@@ -36,6 +40,7 @@ const Recipes = () => {
   }, []);
 
   async function fetchRecipes() {
+    setIsLoading(true);
     try {
       const response = await axios.get(
         `/api/v1/recipes/index/${location.search ?? location.search}`
@@ -43,6 +48,8 @@ const Recipes = () => {
       setRecipes(response.data);
     } catch (error) {
       console.error("Error fetching recipes:", error.message);
+    } finally {
+      setIsLoading(false);
     }
   }
 
@@ -131,12 +138,16 @@ const Recipes = () => {
             additions, and our editor’s picks, so there’s sure to be something
             tempting for you to try.
           </p>
-          <AddLinkButton path={"/recipe/new"} text="Add recipe" />
+          {user ? (
+            <AddLinkButton path={"/recipe/new"} text="Add recipe" />
+          ) : (
+            <AddRecipe user={user} />
+          )}
         </section>
       </div>
-      <main>
+      <main className="w-100">
         <section className="w-100 d-flex flex-column gap-3 pt-3 px-5">
-          <div>
+          <div className="w-100 text-start">
             <Link to={backLinkRef.current} className="text-dark">
               <BsArrowLeftShort style={{ width: 32, height: 32 }} />
               <span className="fs-5">Back</span>
@@ -173,7 +184,20 @@ const Recipes = () => {
             </form>
           ) : null}
         </section>
-        {recipes ? <RecipesList recipes={recipes} /> : noRecipe}
+        {isLoading ? (
+          <div
+            className="d-flex justify-content-center"
+            style={{ height: "40vh" }}
+          >
+            <div className="spinner-border" role="status">
+              <span className="visually-hidden">Loading...</span>
+            </div>
+          </div>
+        ) : recipes ? (
+          <RecipesList recipes={recipes} />
+        ) : (
+          noRecipe
+        )}
       </main>
       <Footer />
     </div>

@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { BsArrowDownRightCircle } from "react-icons/bs";
 
-const Categories = ({ categories }) => {
+const Categories = ({ categories, isLoading }) => {
   const allCategories = categories.map((category, index) =>
     index % 2 ? (
       <div key={index} className="col-md-6 col-lg-4">
@@ -54,7 +54,13 @@ const Categories = ({ categories }) => {
       </div>
       <div className="container w-100">
         <div className="w-100 row" style={{ rowGap: 16 }}>
-          {categories.length > 0 ? (
+          {isLoading ? (
+            <div className="d-flex justify-content-center">
+              <div className="spinner-border" role="status">
+                <span className="visually-hidden">Loading...</span>
+              </div>
+            </div>
+          ) : categories.length > 0 ? (
             <>
               {allCategories}
               <div className="col-md-6 col-lg-4">

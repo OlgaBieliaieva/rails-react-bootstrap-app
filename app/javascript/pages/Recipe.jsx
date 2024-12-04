@@ -10,6 +10,7 @@ const Recipe = () => {
   const [recipe, setRecipe] = useState("");
   const [ingredients, setIngredients] = useState("");
   const [isValidImg, setIsValidImg] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   let ingredientImg =
     "https://res.cloudinary.com/de3wlojzp/image/upload/v1732287644/no-ingr_xcxuye.png";
 
@@ -18,12 +19,15 @@ const Recipe = () => {
   }, [params.id]);
 
   async function fetchRecipe() {
+    setIsLoading(true);
     try {
       const response = await axios.get(`/api/v1/recipes/show/${params.id}`);
       setRecipe(response.data.recipe);
       setIngredients(response.data.expanded_ingredients);
     } catch (error) {
       console.error("Error fetching recipe:", error.message);
+    } finally {
+      setIsLoading(false);
     }
   }
 
@@ -116,49 +120,62 @@ const Recipe = () => {
           </ol>
         </nav>
       </div>
-      <main>
-        <div
-          className="w-100 container container-fluid d-flex flex-column align-items-center justify-content-center overflow-hidden p-0 m-0"
-          style={{ borderRadius: 30 }}
-        >
-          <img
-            src={recipe.thumb}
-            alt={`${recipe.title} image`}
-            style={{ width: "100%", maxHeight: 400, objectFit: "cover" }}
-          />
-        </div>
-        <div className="w-100 container container-fluid">
-          <h1 className="display-4">{recipe.title}</h1>
-          <p className="lead text-muted">{recipe.description}</p>
-        </div>
-
-        <div className="container container-fluid w-100">
-          <div className="row container container-fluid w-100">
-            <div className="col-sm-12 col-lg-3 container container-fluid mb-5">
-              <h5 className="mb-2">Ingredients</h5>
-              <div className="row gap-2 justify-content-center">
-                {ingredientList()}
-              </div>
-            </div>
-            <div className="col-sm-12 col-lg-7 mb-5">
-              <h5 className="mb-2">Preparation Instructions</h5>
-              <div
-                dangerouslySetInnerHTML={{
-                  __html: `${recipeInstruction}`,
-                }}
-              />
-            </div>
-            <div className="col-sm-12 col-lg-2">
-              <button
-                type="button"
-                className="btn btn-danger"
-                onClick={deleteRecipe}
-              >
-                Delete Recipe
-              </button>
+      <main className="w-100 container container-fluid d-flex flex-column align-items-center justify-content-center">
+        {isLoading ? (
+          <div
+            className="d-flex justify-content-center"
+            style={{ height: "40vh" }}
+          >
+            <div className="spinner-border" role="status">
+              <span className="visually-hidden">Loading...</span>
             </div>
           </div>
-        </div>
+        ) : (
+          <>
+            <div
+              className="w-100 container container-fluid d-flex flex-column align-items-center justify-content-center overflow-hidden p-0 m-0"
+              style={{ borderRadius: 30 }}
+            >
+              <img
+                src={recipe.thumb}
+                alt={`${recipe.title} image`}
+                style={{ width: "100%", maxHeight: 400, objectFit: "cover" }}
+              />
+            </div>
+            <div className="w-100 container container-fluid">
+              <h1 className="display-4">{recipe.title}</h1>
+              <p className="lead text-muted">{recipe.description}</p>
+            </div>
+
+            <div className="container container-fluid w-100">
+              <div className="row container container-fluid w-100">
+                <div className="col-sm-12 col-lg-3 container container-fluid mb-5">
+                  <h5 className="mb-2">Ingredients</h5>
+                  <div className="row gap-2 justify-content-center">
+                    {ingredientList()}
+                  </div>
+                </div>
+                <div className="col-sm-12 col-lg-7 mb-5">
+                  <h5 className="mb-2">Preparation Instructions</h5>
+                  <div
+                    dangerouslySetInnerHTML={{
+                      __html: `${recipeInstruction}`,
+                    }}
+                  />
+                </div>
+                <div className="col-sm-12 col-lg-2">
+                  <button
+                    type="button"
+                    className="btn btn-danger"
+                    onClick={deleteRecipe}
+                  >
+                    Delete Recipe
+                  </button>
+                </div>
+              </div>
+            </div>
+          </>
+        )}
       </main>
       <Footer />
     </div>

@@ -8,16 +8,20 @@ import Footer from "../components/Footer";
 
 export default () => {
   const [categories, setCategories] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
   useEffect(() => {
     fetchCategories();
   }, []);
 
   async function fetchCategories() {
+    setIsLoading(true);
     try {
       const response = await axios.get("/api/v1/categories/index");
       setCategories(response.data);
     } catch (error) {
       console.error("Error fetching categories:", error.message);
+    } finally {
+      setIsLoading(false);
     }
   }
 
@@ -28,7 +32,7 @@ export default () => {
         <Hero />
       </div>
       <main className="w-100">
-        <Categories categories={categories} />
+        <Categories categories={categories} isLoading={isLoading} />
         <Testimonials />
       </main>
       <Footer />

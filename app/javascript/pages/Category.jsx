@@ -1,29 +1,31 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import {
   Link,
   useLocation,
-  useNavigate,
   useParams,
   useSearchParams,
 } from "react-router-dom";
 import axios from "axios";
+import { UserContext } from "../components/userContext";
 import Header from "../components/Header";
-import { AddLinkButton } from "../components/Buttons";
 import Select from "../components/Select";
 import RecipesList from "../components/RecipesList";
 import Footer from "../components/Footer";
 import { BsArrowLeftShort } from "react-icons/bs";
+import AddRecipe from "../components/AddRecipe";
+import { AddLinkButton } from "../components/Buttons";
 
 const Category = () => {
+  const { user } = useContext(UserContext);
   const params = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
-  const navigate = useNavigate();
   const location = useLocation();
   const backLinkRef = useRef(location.state?.from ?? "/");
   const [category, setCategory] = useState("");
   const [areas, setAreas] = useState("");
   const [ingredients, setIngredients] = useState("");
   const [recipes, setRecipes] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     fetchCategory();
@@ -35,6 +37,7 @@ const Category = () => {
   }, []);
 
   async function fetchCategory() {
+    setIsLoading(true);
     try {
       const response = await axios.get(
         `/api/v1/categories/show/${params.id}${
@@ -45,6 +48,8 @@ const Category = () => {
       setRecipes(response.data.recipes);
     } catch (error) {
       console.error("Error fetching areas:", error.message);
+    } finally {
+      setIsLoading(false);
     }
   }
 
@@ -94,10 +99,14 @@ const Category = () => {
             {category.name}
           </h1>
           <p className="text-light text-center fs-4">{category.description}</p>
-          <AddLinkButton path={"/recipe/new"} text="Add recipe" />
+          {user ? (
+            <AddLinkButton path={"/recipe/new"} text="Add recipe" />
+          ) : (
+            <AddRecipe user={user} />
+          )}
         </section>
       </div>
-      <main>
+      <main className="w-100">
         <div className="w-100 d-flex flex-column gap-3 pt-3 px-5">
           <div>
             <Link to={backLinkRef.current} className="w-100 text-dark">
@@ -128,7 +137,18 @@ const Category = () => {
             ) : null}
           </section>
         </div>
-        {recipes ? <RecipesList recipes={recipes} /> : null}
+        {isLoading ? (
+          <div
+            className="d-flex justify-content-center"
+            style={{ height: "40vh" }}
+          >
+            <div className="spinner-border" role="status">
+              <span className="visually-hidden">Loading...</span>
+            </div>
+          </div>
+        ) : recipes ? (
+          <RecipesList recipes={recipes} />
+        ) : null}
       </main>
       <Footer />
     </div>

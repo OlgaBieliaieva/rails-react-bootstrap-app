@@ -96,8 +96,6 @@ const NewRecipeForm = () => {
   }
 
   const handleSubmit = async (values, { resetForm }) => {
-    console.log(values);
-
     const formData = new FormData();
     formData.append("title", values.title);
     formData.append("description", values.description);
@@ -107,7 +105,6 @@ const NewRecipeForm = () => {
     formData.append("ingredients", JSON.stringify(values.ingredients));
     formData.append("time", values.time);
     formData.append("instructions", values.instructions);
-    console.log(formData);
 
     try {
       const response = await axios.post("/api/v1/recipes/create", formData, {
@@ -116,7 +113,9 @@ const NewRecipeForm = () => {
           Accept: "application/json",
         },
       });
-      console.log(response);
+
+      const newRecipeId = response.data.recipe.id;
+      navigate(`/recipe/${newRecipeId}`);
       resetForm();
     } catch (error) {
       console.error("Error creating recipe:", error);
@@ -137,7 +136,7 @@ const NewRecipeForm = () => {
           values,
           touched,
           errors,
-          resetForm
+          resetForm,
         }) => (
           <Form
             id="add-recipe-form"
@@ -149,7 +148,7 @@ const NewRecipeForm = () => {
               {imagePreview ? (
                 <div
                   className="w-100 container container-fluid d-flex flex-column align-items-center justify-content-center overflow-hidden p-0 m-0 mb-3"
-                  style={{ borderRadius: 30}}
+                  style={{ borderRadius: 30 }}
                 >
                   <img
                     src={imagePreview}
